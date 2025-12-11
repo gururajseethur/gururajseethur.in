@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Services — Gururaj Seethur</title>
+  <meta name="description" content="Services: AI automation, short-form video production, cybersecurity-aware systems." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#07070a;--neon:#00a3ff;--accent:#7b2cff;--muted:#9aa4b2;--glass-border:rgba(255,255,255,0.06);}
+    html,body{height:100%;margin:0;background:radial-gradient(ellipse at 20% 10%, rgba(0,163,255,0.04), transparent 8%), radial-gradient(ellipse at 80% 90%, rgba(123,44,255,0.03), transparent 12%), var(--bg);font-family:Inter,system-ui,Arial;color:#e6f0ff}
+    .container{max-width:1100px;margin:0 auto;padding:36px}
+    h1{font-size:32px;margin:0 0 6px}
+    p.lead{color:#bcdffb}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:24px;margin-top:24px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;border:1px solid var(--glass-border)}
+    .service{margin-bottom:18px}
+    .service h3{margin:0 0 6px}
+    .service p{color:var(--muted);margin:0}
+    .price{margin-top:10px;color:#bcdffb;font-weight:700}
+    .cta{display:flex;gap:12px;margin-top:18px}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+    .btn-primary{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#031026}
+    aside .box{position:sticky;top:36px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid var(--glass-border)}
+    ul{color:var(--muted)}
+    .faq{margin-top:22px}
+    .faq h4{margin:0 0 8px}
+    .note{color:var(--muted);font-size:13px;margin-top:8px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow" style="color:var(--muted);font-size:13px">Services • Automation • Content • Security</div>
+      <h1>Services</h1>
+      <p class="lead">Productized offerings for creators, startups, and small businesses. Pick a lane — we scope, automate, and ship.</p>
+    </header>
+
+    <main class="grid">
+      <div>
+        <div class="card service">
+          <h3>Short-Form Content Packs</h3>
+          <p>Create consistent, growth-focused Shorts/Reels that convert. Scripts, editing, captions, thumbnails, and post-ready exports — automated for speed.</p>
+          <div class="price">Starting at ₹4,000 / pack (10 videos)</div>
+          <ul style="margin-top:10px">
+            <li>AI-assisted scripting & ideation</li>
+            <li>Professional editing (Resolve / Premiere)</li>
+            <li>Auto captions + thumbnails</li>
+            <li>Delivery via cloud + schedule-ready assets</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-primary" href="mailto:gururajseethur@gmail.com?subject=Shorts+Pack+Inquiry">Book a Pack</a>
+            <a class="btn" href="#contact">Custom Quote</a>
+          </div>
+        </div>
+
+        <div class="card service">
+          <h3>AI Automation & Workflows</h3>
+          <p>From lead capture funnels to WhatsApp bots and content pipelines — I build modular automations using n8n and open tooling. One-time build, multiple deployments.</p>
+          <div class="price">Projects: ₹3,000 – ₹25,000 (scope-based)</div>
+          <ul style="margin-top:10px">
+            <li>n8n workflows, Zapier alternatives</li>
+            <li>WhatsApp & Telegram integrations</li>
+            <li>Content generation pipelines (TTS, scripts)</li>
+            <li>Delivery & documentation (hand-off)</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-primary" href="mailto:gururajseethur@gmail.com?subject=Automation+Project+Inquiry">Start Automation</a>
+            <a class="btn" href="#contact">Case Studies</a>
+          </div>
+        </div>
+
+        <div class="card service">
+          <h3>Security-Aware Systems</h3>
+          <p>Light audits, secure-by-design recommendations, and hardened automation practices. Perfect for small businesses deploying bots and webhooks.</p>
+          <div class="price">Security Health Check starting ₹2,500</div>
+          <ul style="margin-top:10px">
+            <li>Configuration review</li>
+            <li>Basic threat modeling</li>
+            <li>Secure webhook handling</li>
+            <li>Mitigation recommendations</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-primary" href="mailto:gururajseethur@gmail.com?subject=Security+Health+Check">Book Audit</a>
+            <a class="btn" href="#contact">Request Custom</a>
+          </div>
+        </div>
+
+        <section class="faq card">
+          <h3>FAQs</h3>
+          <div style="margin-top:10px">
+            <h4>How long does a Shorts pack take?</h4>
+            <p class="note">Standard turnaround: 3–7 days for first pack. Subsequent packs are faster with templates and automation.</p>
+          </div>
+          <div style="margin-top:12px">
+            <h4>Do you provide source files?</h4>
+            <p class="note">Yes — .proj, stems, and exports included in deliverables when requested.</p>
+          </div>
+          <div style="margin-top:12px">
+            <h4>Can I scale this to a monthly retainer?</h4>
+            <p class="note">Absolutely. Monthly retainers for weekly content pipelines or automation maintenance available.</p>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <div class="box">
+          <h4>Service Tiers</h4>
+          <ul style="margin-top:8px;color:var(--muted)">
+            <li><strong>Starter:</strong> Single pack / one-off projects</li>
+            <li><strong>Growth:</strong> Monthly content + automation setup</li>
+            <li><strong>Scale:</strong> Dedicated automations + retainer</li>
+          </ul>
+
+          <h4 style="margin-top:12px">What I need from you</h4>
+          <ul style="margin-top:8px;color:var(--muted)">
+            <li>Brand assets (logo, fonts)</li>
+            <li>Sample content or references</li>
+            <li>Access to accounts (YouTube, socials, n8n)</li>
+            <li>Clear goals & target audience</li>
+          </ul>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn btn-primary" href="mailto:gururajseethur@gmail.com?subject=Service+Inquiry">Get Started</a>
+            <a class="btn" href="#contact">Contact</a>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer style="margin-top:36px;color:var(--muted)">
+      © Gururaj Seethur — Automation-first creative systems • 2025
+    </footer>
+  </div>
+</body>
+</html>
