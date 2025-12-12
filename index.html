@@ -6,214 +6,223 @@
   <title>Gururaj Seethur — AI Automations & Short-Form Content</title>
   <meta name="description" content="AI automations, short-form video production and cybersecurity-minded systems by Gururaj Seethur." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    :root{
-      --bg:#07070a;
-      --card:#0f1317cc;
-      --glass: rgba(255,255,255,0.04);
-      --neon:#00a3ff; /* blue neon */
-      --accent:#7b2cff; /* purple */
-      --muted:#9aa4b2;
-      --glass-border: rgba(255,255,255,0.06);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:radial-gradient(ellipse at 20% 10%, rgba(0,163,255,0.04), transparent 8%), radial-gradient(ellipse at 80% 90%, rgba(123,44,255,0.03), transparent 12%), var(--bg);font-family:Inter,system-ui,Arial;color:#e6f0ff}
-    a{color:inherit;text-decoration:none}
-    .container{max-width:1100px;margin:0 auto;padding:36px}
-
-    /* HERO */
-    .hero{display:flex;gap:48px;align-items:center;padding:60px 0}
-    .hero-left{flex:1}
-    .eyebrow{color:var(--muted);font-size:13px;margin-bottom:10px}
-    h1{font-size:38px;line-height:1.02;margin:0 0 14px;font-weight:800;letter-spacing:-0.02em}
-    p.lead{color:#bcdffb;max-width:620px;margin:0 0 22px}
-    .cta{display:flex;gap:14px}
-    .btn{padding:12px 18px;border-radius:10px;font-weight:600;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
-    .btn-primary{background:linear-gradient(90deg,var(--neon),var(--accent));box-shadow:0 6px 30px rgba(0,163,255,0.12);border:none;color:#031026}
-    .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--neon)}
-    .micro{color:var(--muted);font-size:13px;margin-top:8px}
-
-    /* HERO RIGHT - graphic */
-    .hero-right{width:420px;height:320px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid var(--glass-border);backdrop-filter:blur(6px)}
-    .ai-blob{width:260px;height:260px;border-radius:50%;background:conic-gradient(from 90deg,var(--neon),var(--accent));filter:blur(28px);opacity:0.25;position:absolute;}
-    .hero-art{position:relative;z-index:2;text-align:center}
-    .hero-art svg{width:160px;height:160px;opacity:0.95}
-
-    /* SERVICES */
-    .services{display:flex;gap:18px;margin:40px 0}
-    .card{flex:1;padding:22px;border-radius:12px;background:linear-gradient(180deg,var(--card),rgba(255,255,255,0.01));border:1px solid var(--glass-border)}
-    .card h3{margin:0 0 8px}
-    .card p{color:var(--muted);margin:0;font-size:14px}
-
-    /* FEATURED WORK */
-    .work{margin:36px 0}
-    .work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .thumb{height:160px;border-radius:10px;background:#0b0f14;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden}
-    .thumb:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.24));}
-    .thumb img{width:100%;height:100%;object-fit:cover}
-    .view-portfolio{display:inline-block;margin-top:14px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
-
-    /* WHY */
-    .why{display:flex;gap:28px;align-items:center;padding:36px 0}
-    .why .bullets{flex:1}
-    .why .visual{width:320px;height:220px;border-radius:12px;background:linear-gradient(135deg, rgba(0,163,255,0.06), rgba(123,44,255,0.05));display:flex;align-items:center;justify-content:center;border:1px solid var(--glass-border)}
-    .pill{display:inline-block;background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);color:var(--muted);font-size:12px}
-
-    /* CTA strip */
-    .strip{padding:28px;border-radius:12px;background:linear-gradient(90deg, rgba(0,163,255,0.06), rgba(123,44,255,0.04));border:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;margin:32px 0}
-
-    /* ABOUT + CONTACT */
-    .about{display:flex;gap:20px;align-items:center;padding:26px 0}
-    .about .avatar{width:120px;height:120px;border-radius:12px;background:linear-gradient(90deg,var(--neon),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800;color:#00101a}
-    .contact{display:flex;gap:12px;align-items:center}
-    .wh{background:#064022;padding:10px;border-radius:10px;color:#bfffe3}
-
-    footer{margin-top:40px;padding:22px 0;color:var(--muted);font-size:13px}
-
-    /* Responsive */
-    @media (max-width:900px){
-      .hero{flex-direction:column-reverse}
-      .hero-right{width:100%;height:260px}
-      .work-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:560px){
-      .work-grid{grid-template-columns:1fr}
-    }
+    .hero { display: flex; gap: 48px; align-items: center; padding: 80px 0 60px; margin-top: 60px; animation: fadeInUp 0.7s ease-out; }
+    .hero-left { flex: 1; }
+    .hero-left h1 { background: linear-gradient(135deg, #e6f0ff, var(--neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; }
+    .cta { display: flex; gap: 14px; margin-top: 24px; }
+    .micro { color: var(--muted); font-size: 13px; margin-top: 16px; }
+    .hero-right { flex: 1; height: 380px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)); border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); overflow: hidden; }
+    .ai-blob { width: 300px; height: 300px; border-radius: 50%; background: conic-gradient(from 90deg, var(--neon), var(--accent), #ff00ff, var(--neon)); filter: blur(40px); opacity: 0.35; position: absolute; animation: rotate 8s linear infinite; }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .hero-art { position: relative; z-index: 2; text-align: center; width: 200px; height: 200px; border-radius: 50%; background: rgba(0, 163, 255, 0.05); border: 2px solid rgba(0, 163, 255, 0.2); display: flex; align-items: center; justify-content: center; animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+    .hero-art svg { width: 120px; height: 120px; opacity: 0.9; }
+    .stats-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin: 60px 0; }
+    .stat-card { padding: 24px; background: linear-gradient(135deg, rgba(0, 163, 255, 0.05), rgba(123, 44, 255, 0.05)); border: 1px solid rgba(0, 163, 255, 0.1); border-radius: 12px; text-align: center; transition: var(--transition); }
+    .stat-card:hover { background: linear-gradient(135deg, rgba(0, 163, 255, 0.1), rgba(123, 44, 255, 0.08)); border-color: var(--neon); transform: translateY(-4px); }
+    .stat-number { font-size: 32px; font-weight: 800; color: var(--neon); margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: var(--muted); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 40px 0; }
+    .service-card { padding: 28px; border-radius: 14px; background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0.01)); border: 1px solid var(--glass-border); transition: var(--transition); position: relative; overflow: hidden; }
+    .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon), var(--accent), transparent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
+    .service-card:hover { border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 12px 48px rgba(0, 163, 255, 0.08); transform: translateY(-4px); }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon { font-size: 32px; margin-bottom: 12px; }
+    .service-card h3 { margin-bottom: 12px; color: #e6f0ff; }
+    .service-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .portfolio-section { margin: 80px 0; }
+    .section-header { margin-bottom: 40px; }
+    .section-header h2 { margin-bottom: 12px; }
+    .section-header p { color: var(--muted); max-width: 600px; }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .portfolio-item { position: relative; border-radius: 12px; overflow: hidden; height: 200px; cursor: pointer; transition: var(--transition); }
+    .portfolio-item img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+    .portfolio-item::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4)); z-index: 1; transition: var(--transition); }
+    .portfolio-item:hover::before { background: linear-gradient(180deg, transparent, rgba(0, 163, 255, 0.3)); }
+    .portfolio-item:hover img { transform: scale(1.05); }
+    .portfolio-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px; color: white; z-index: 2; opacity: 0; transform: translateY(10px); transition: var(--transition); }
+    .portfolio-item:hover .portfolio-overlay { opacity: 1; transform: translateY(0); }
+    .portfolio-overlay h4 { margin: 0 0 4px; font-size: 14px; }
+    .portfolio-overlay p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.8); }
+    .testimonials-section { margin: 80px 0; background: linear-gradient(135deg, rgba(0, 163, 255, 0.05), rgba(123, 44, 255, 0.05)); border: 1px solid var(--glass-border); border-radius: 16px; padding: 60px 40px; text-align: center; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; }
+    .testimonial-card { padding: 24px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; transition: var(--transition); }
+    .testimonial-card:hover { border-color: var(--neon); background: rgba(0, 163, 255, 0.05); }
+    .stars { color: #fbbf24; margin-bottom: 12px; }
+    .testimonial-text { color: #bcdffb; font-size: 14px; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+    .testimonial-author { font-weight: 600; font-size: 13px; color: #e6f0ff; }
+    .testimonial-role { font-size: 12px; color: var(--muted); }
+    .cta-banner { margin: 80px 0; padding: 48px; background: linear-gradient(135deg, var(--neon), var(--accent)); border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
+    .cta-banner::before { content: ''; position: absolute; top: -50%; right: -50%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent); border-radius: 50%; }
+    .cta-banner h2 { margin: 0 0 12px; color: #031026; position: relative; z-index: 1; }
+    .cta-banner p { color: rgba(3, 16, 38, 0.8); margin-bottom: 24px; position: relative; z-index: 1; }
+    .cta-banner .btn { position: relative; z-index: 1; }
+    .skills-section { margin: 80px 0; }
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+    .skill-badge { padding: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; text-align: center; transition: var(--transition); }
+    .skill-badge:hover { background: rgba(0, 163, 255, 0.1); border-color: var(--neon); }
+    .skill-badge h4 { margin: 0 0 8px; color: #e6f0ff; }
+    .skill-badge p { margin: 0; font-size: 12px; color: var(--muted); }
+    @media (max-width: 1024px) { .hero { flex-direction: column; padding: 60px 0 40px; } .hero-right { height: 300px; } .ai-blob { width: 240px; height: 240px; } .services-grid { grid-template-columns: 1fr; } .cta-banner { padding: 36px 24px; } }
+    @media (max-width: 768px) { .hero { padding: 40px 0 30px; } .hero-left h1 { font-size: 28px; } .cta { flex-wrap: wrap; } .stats-section { grid-template-columns: repeat(2, 1fr); } .testimonials-section { padding: 40px 24px; } .skills-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { .hero-left h1 { font-size: 24px; } .btn { padding: 10px 16px; font-size: 13px; } .stat-card { padding: 16px; } .stat-number { font-size: 24px; } }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- HERO -->
-    <header class="hero">
-      <div class="hero-left">
-        <div class="eyebrow">AI • Automation • Cybersecurity</div>
-        <h1>Building AI Automation & High-Impact Content for the Next Gen.</h1>
-        <p class="lead">I help brands, creators, and businesses scale using automated workflows, short-form content, and cybersecurity-backed thinking.</p>
-        <div class="cta">
-          <a href="#contact" class="btn btn-primary">Start a Project</a>
-          <a href="#portfolio" class="btn btn-outline">View My Work</a>
+  <nav>
+    <div class="nav-container">
+      <div class="logo">Gururaj Seethur</div>
+      <ul class="nav-links">
+        <li><a href="#hero" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <button class="theme-toggle">☀️ Light</button>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <section class="hero" id="hero" data-section="hero">
+        <div class="hero-left">
+          <div class="eyebrow">AI • Automation • Cybersecurity</div>
+          <h1>Building AI Automation & High-Impact Content for the Next Gen.</h1>
+          <p class="lead">I help brands, creators, and businesses scale using automated workflows, short-form content, and cybersecurity-backed thinking. Fast, reliable, and engineered for growth.</p>
+          <div class="cta">
+            <a href="contact.html" class="btn btn-primary">Start a Project</a>
+            <a href="#portfolio" class="btn btn-outline">View My Work</a>
+          </div>
+          <div class="micro">✓ 4.5+ years of editing  •  ✓ 54+ security rooms  •  ✓ Automation-first mindset</div>
         </div>
-        <div class="micro">Trusted by teams, driven by systems, powered by automation.</div>
-      </div>
-
-      <div class="hero-right">
-        <div class="ai-blob"></div>
-        <div class="hero-art">
-          <!-- Minimalistic AI brain SVG -->
-          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g opacity="0.95">
-              <path d="M32 6c-6.627 0-12 5.373-12 12v4h24v-4c0-6.627-5.373-12-12-12z" fill="white" opacity="0.06"/>
-              <rect x="16" y="28" width="32" height="22" rx="3" fill="white" opacity="0.02"/>
-              <g transform="translate(10,6)" stroke="white" stroke-opacity="0.9" stroke-width="1.1">
-                <circle cx="22" cy="12" r="9" stroke="url(#g1)" fill="none"/>
-              </g>
-            </g>
-          </svg>
+        <div class="hero-right">
+          <div class="ai-blob"></div>
+          <div class="hero-art">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:var(--neon);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="40" stroke="url(#grad1)" stroke-width="2" opacity="0.5"/>
+              <circle cx="50" cy="50" r="30" stroke="url(#grad1)" stroke-width="1.5" opacity="0.3"/>
+              <circle cx="35" cy="50" r="4" fill="url(#grad1)"/>
+              <circle cx="50" cy="35" r="4" fill="url(#grad1)"/>
+              <circle cx="65" cy="50" r="4" fill="url(#grad1)"/>
+              <circle cx="50" cy="65" r="4" fill="url(#grad1)"/>
+            </svg>
+          </div>
         </div>
-      </div>
-    </header>
+      </section>
 
-    <!-- SERVICES -->
-    <section class="services">
-      <div class="card">
-        <h3>AI Automation</h3>
-        <p>I build smart automations that save hours, reduce costs, and scale operations. WhatsApp bots, lead funnels, content workflows — built on n8n and modular systems.</p>
-      </div>
-      <div class="card">
-        <h3>Short-Form Video</h3>
-        <p>High-impact Shorts/Reels: AI-driven scripts, pro edits, and fast turnaround for creators and brands seeking growth.</p>
-      </div>
-      <div class="card">
-        <h3>Cybersecurity Mindset</h3>
-        <p>Security-aware systems design — I integrate defensive thinking into workflows so your automations are reliable and resilient.</p>
-      </div>
-    </section>
+      <section class="stats-section scroll-reveal">
+        <div class="stat-card"><div class="stat-number" data-count="4">0</div><div class="stat-label">Years of Editing</div></div>
+        <div class="stat-card"><div class="stat-number">50+</div><div class="stat-label">Security Training</div></div>
+        <div class="stat-card"><div class="stat-number">100%</div><div class="stat-label">On-Time Delivery</div></div>
+        <div class="stat-card"><div class="stat-number">15+</div><div class="stat-label">Successful Projects</div></div>
+      </section>
 
-    <!-- FEATURED WORK -->
-    <section class="work" id="portfolio">
-      <h2>My Work. My Craft. My Edge.</h2>
-      <div class="work-grid">
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+1" alt="Sample 1"></div>
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+2" alt="Sample 2"></div>
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+3" alt="Sample 3"></div>
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+4" alt="Sample 4"></div>
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+5" alt="Sample 5"></div>
-        <div class="thumb"><img src="https://via.placeholder.com/640x360?text=Sample+6" alt="Sample 6"></div>
-      </div>
-      <a class="view-portfolio" href="#portfolio">View Full Portfolio →</a>
-    </section>
-
-    <!-- WHY WORK WITH ME -->
-    <section class="why">
-      <div class="bullets">
-        <div class="pill">Engineering Creativity</div>
-        <h3 style="margin-top:12px">Engineering Creativity With Systems Thinking.</h3>
-        <p style="color:var(--muted);max-width:600px">I combine 4+ years of editing experience, an automation-first mindset, and a security-aware approach to build fast, reliable, and scalable solutions for creators and businesses.</p>
-        <ul style="color:var(--muted);margin-top:12px">
-          <li>4.5+ years of editing across brands</li>
-          <li>Automation-first (n8n, bots, workflows)</li>
-          <li>54+ TryHackMe rooms — security-aware systems</li>
-        </ul>
-      </div>
-      <div class="visual">
-        <!-- placeholder for glowing 3D brain or animation -->
-        <div style="width:160px;height:160px;border-radius:50%;background:linear-gradient(90deg,var(--neon),var(--accent));filter:blur(18px);opacity:0.18"></div>
-      </div>
-    </section>
-
-    <!-- CTA STRIP -->
-    <section class="strip">
-      <div>
-        <h3 style="margin:0">Let’s Build Something Powerful.</h3>
-        <div style="color:var(--muted);margin-top:6px">Automations, content, or security — pick your lane. I’ll handle the systems.</div>
-      </div>
-      <div>
-        <a class="btn btn-primary" href="#contact">Start Your Project →</a>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section class="about">
-      <div class="avatar">G</div>
-      <div>
-        <h3>Hi, I’m Gururaj Seethur.</h3>
-        <p style="color:var(--muted);max-width:640px">Video editor, automation designer, and cybersecurity learner. I combine creativity with technical architecture to ship fast, scalable results. My workflow blends AI, automation, and polished editing to deliver consistent output.</p>
-        <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
-          <div class="pill">4.5+ years editing</div>
-          <div class="pill">54+ TryHackMe rooms</div>
-          <div class="pill">Automation-first</div>
+      <section class="section" id="services" data-section="services">
+        <div class="section-header">
+          <h2>Services & Specialties</h2>
+          <p>Tailored solutions that scale. From automation pipelines to polished content, I deliver results with a systems-first approach.</p>
         </div>
-      </div>
-    </section>
+        <div class="services-grid scroll-reveal">
+          <div class="service-card">
+            <div class="service-icon">⚙️</div>
+            <h3>AI Automations</h3>
+            <p>Smart workflows that save time and reduce manual work. WhatsApp bots, lead funnels, content pipelines — built on n8n and modular systems.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🎬</div>
+            <h3>Short-Form Content</h3>
+            <p>High-impact Shorts/Reels optimized for growth. AI-assisted scripting, professional editing, auto captions, and fast turnaround.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🔐</div>
+            <h3>Security-Aware Systems</h3>
+            <p>Build secure by design. Light audits, webhook hardening, threat modeling, and resilient automation practices.</p>
+          </div>
+        </div>
+      </section>
 
-    <!-- CONTACT -->
-    <section id="contact" style="padding:18px 0">
-      <h3>Let’s Connect.</h3>
-      <p style="color:var(--muted);margin-bottom:12px">Tell me what you’re building — I’ll help you make it real.</p>
-      <div class="contact">
-        <a class="wh" href="https://wa.me/918762714344" target="_blank">WhatsApp</a>
-        <a class="btn btn-outline" href="mailto:gururajseethur@gmail.com">Email</a>
-        <!-- Simple contact form (static) -->
-        <form action="mailto:gururajseethur@gmail.com" method="post" enctype="text/plain" style="margin-left:12px;">
-          <input name="name" placeholder="Name" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6f0ff;margin-right:8px">
-          <input name="email" placeholder="Email" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6f0ff;margin-right:8px">
-          <select name="service" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6f0ff;margin-right:8px">
-            <option value="shorts">Short-form content</option>
-            <option value="automation">Automation</option>
-            <option value="cyber">Cybersecurity</option>
-          </select>
-          <button class="btn btn-primary" type="submit">Send</button>
-        </form>
-      </div>
-    </section>
+      <section class="portfolio-section scroll-reveal" id="portfolio" data-section="portfolio">
+        <div class="section-header">
+          <h2>Featured Work</h2>
+          <p>A curated selection of automation projects, short-form videos, and security implementations that demonstrate impact and polish.</p>
+        </div>
+        <div class="portfolio-grid">
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=AI+Script+Tool" alt="AI Script Generator"><div class="portfolio-overlay"><h4>AI Script Generator</h4><p>Automation pipeline for video scripts</p></div></div>
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=WhatsApp+Bot" alt="WhatsApp Automation"><div class="portfolio-overlay"><h4>WhatsApp Lead Funnel</h4><p>n8n automation for lead capture & follow-up</p></div></div>
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=Content+Reel" alt="TikTok Reel"><div class="portfolio-overlay"><h4>30-Sec Tech Reel</h4><p>Optimized short-form video for growth</p></div></div>
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=Security+Audit" alt="Security Review"><div class="portfolio-overlay"><h4>Webhook Security Audit</h4><p>Threat modeling & mitigation report</p></div></div>
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=Kannada+Video" alt="Kannada Content"><div class="portfolio-overlay"><h4>Kannada Educational Content</h4><p>Localized storytelling with TTS</p></div></div>
+          <div class="portfolio-item"><img src="https://via.placeholder.com/500x400?text=Growth+Pack" alt="Content Pack"><div class="portfolio-overlay"><h4>10-Video Content Pack</h4><p>Monthly shorts delivery & optimization</p></div></div>
+        </div>
+        <div style="text-align: center;"><a href="portfolio.html" class="btn btn-primary">View Full Portfolio →</a></div>
+      </section>
 
-    <footer>
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
-        <div>© "Gururaj Seethur" — Built for scale. 2025</div>
-        <div style="color:var(--muted)">Built with automation-first mindset • <a href="https://gururajseethur.in" style="color:var(--muted)">gururajseethur.in</a></div>
-      </div>
-    </footer>
+      <section class="testimonials-section scroll-reveal">
+        <h2>What Clients Say</h2>
+        <p style="color: var(--muted); margin-top: 12px; max-width: 600px; margin-left: auto; margin-right: auto;">Real feedback from creators and businesses who've scaled with my automations and content.</p>
+        <div class="testimonials-grid">
+          <div class="testimonial-card"><div class="stars">★★★★★</div><p class="testimonial-text">"Gururaj delivered our automation in half the time we expected. The system is clean, fast, and actually works."</p><p class="testimonial-author">Sarah K.</p><p class="testimonial-role">Marketing Director, Tech Startup</p></div>
+          <div class="testimonial-card"><div class="stars">★★★★★</div><p class="testimonial-text">"The content packs have been a game-changer. We're posting more consistently and seeing better engagement."</p><p class="testimonial-author">Amit P.</p><p class="testimonial-role">Creator, Digital Marketing</p></div>
+          <div class="testimonial-card"><div class="stars">★★★★★</div><p class="testimonial-text">"Security audit was thorough and actionable. He didn't just find issues — he explained them and gave clear fixes."</p><p class="testimonial-author">Vikram S.</p><p class="testimonial-role">CTO, SaaS Company</p></div>
+        </div>
+      </section>
 
-  </div>
+      <section class="skills-section scroll-reveal" id="skills" data-section="skills">
+        <div class="section-header">
+          <h2>Tools & Technologies</h2>
+          <p>The stack I use to build fast, scalable, and secure solutions.</p>
+        </div>
+        <div class="skills-grid">
+          <div class="skill-badge"><h4>Automation</h4><p>n8n, Zapier, Make, Webhook APIs</p></div>
+          <div class="skill-badge"><h4>Video Editing</h4><p>DaVinci Resolve, Premiere Pro, CapCut</p></div>
+          <div class="skill-badge"><h4>Content Creation</h4><p>AI scripting, TTS, Auto captions</p></div>
+          <div class="skill-badge"><h4>Security</h4><p>Threat modeling, HMAC, OAuth, Audit</p></div>
+          <div class="skill-badge"><h4>Backend Systems</h4><p>APIs, Webhooks, Data pipelines</p></div>
+          <div class="skill-badge"><h4>Cloud Platforms</h4><p>AWS, Google Cloud, Firebase</p></div>
+        </div>
+      </section>
+
+      <section class="cta-banner scroll-reveal">
+        <h2>Ready to Scale?</h2>
+        <p>Let's build something powerful. Automation, content, or security — I'll handle the systems.</p>
+        <a href="contact.html" class="btn btn-primary">Start Your Project →</a>
+      </section>
+
+      <footer>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--glass-border);">
+          <div>
+            <h4 style="margin: 0 0 12px; color: #e6f0ff;">Gururaj Seethur</h4>
+            <p style="margin: 0 0 12px; color: var(--muted); font-size: 14px;">AI automation designer, video editor, and cybersecurity learner. Building fast, scalable, and secure solutions for creators and businesses.</p>
+            <div style="display: flex; gap: 12px; margin-top: 16px;">
+              <a href="https://wa.me/918762714344" class="btn btn-secondary" style="flex: 1; text-align: center;">WhatsApp</a>
+              <a href="mailto:gururajseethur@gmail.com" class="btn btn-secondary" style="flex: 1; text-align: center;">Email</a>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin: 0 0 12px; color: #e6f0ff;">Quick Links</h4>
+            <ul style="list-style: none; margin: 0; padding: 0;">
+              <li style="margin-bottom: 8px;"><a href="about.html" style="color: var(--muted); font-size: 14px;">About</a></li>
+              <li style="margin-bottom: 8px;"><a href="portfolio.html" style="color: var(--muted); font-size: 14px;">Portfolio</a></li>
+              <li style="margin-bottom: 8px;"><a href="services.html" style="color: var(--muted); font-size: 14px;">Services</a></li>
+              <li style="margin-bottom: 8px;"><a href="contact.html" style="color: var(--muted); font-size: 14px;">Contact</a></li>
+              <li><a href="https://www.linkedin.com/in/gururaj-seethur" style="color: var(--muted); font-size: 14px;">LinkedIn</a></li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--glass-border); text-align: center; color: var(--muted); font-size: 12px;">© 2025 Gururaj Seethur. Built with automation-first mindset. • <a href="https://gururajseethur.in" style="color: var(--muted);">gururajseethur.in</a></div>
+      </footer>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
