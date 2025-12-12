@@ -235,12 +235,13 @@ animation: fadeInUp 0.6s ease-out forwards; /* Change 0.6s */
 ```
 
 ### Update Contact Links
-Find in footer:
+Find in footer and contact pages:
 ```html
-<a href="https://wa.me/918762714344">WhatsApp</a>
-<a href="mailto:gururajseethur@gmail.com">Email</a>
+<a href="https://wa.me/918762714344">WhatsApp: +91 8762714344</a>
+<a href="mailto:gururajseethur@gmail.com">Email: gururajseethur@gmail.com</a>
+<a href="https://www.linkedin.com/in/gururajseethur">LinkedIn: /in/gururajseethur</a>
 ```
-Replace with your own links.
+These are already pre-filled with your info!
 
 ## 📱 Mobile Testing
 
