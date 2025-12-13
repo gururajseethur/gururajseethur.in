@@ -4,111 +4,315 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portfolio — Gururaj Seethur</title>
-  <meta name="description" content="Selected video edits, automation case studies, and security projects by Gururaj Seethur." />
+  <meta name="description" content="Professional video editing portfolio showcasing video production work from BrandStory Digital, upGrad Campus, and 404 DM." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="video-portfolio.css">
   <style>
-    :root{--bg:#07070a;--neon:#00a3ff;--accent:#7b2cff;--muted:#9aa4b2;--glass-border:rgba(255,255,255,0.06);}
-    html,body{height:100%;margin:0;background:radial-gradient(ellipse at 20% 10%, rgba(0,163,255,0.04), transparent 8%), radial-gradient(ellipse at 80% 90%, rgba(123,44,255,0.03), transparent 12%), var(--bg);font-family:Inter,system-ui,Arial;color:#e6f0ff}
-    .container{max-width:1100px;margin:0 auto;padding:36px}
-    h1{font-size:32px;margin:0 0 6px}
-    p.lead{color:#bcdffb}
-    .filters{display:flex;gap:10px;margin-top:18px}
-    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);cursor:pointer}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:0;border-radius:12px;border:1px solid var(--glass-border);overflow:hidden}
-    .card img{width:100%;height:220px;object-fit:cover;display:block}
-    .card .meta{padding:12px}
-    .meta h4{margin:0 0 6px}
-    .meta p{color:var(--muted);margin:0;font-size:14px}
-    .case{display:flex;gap:12px;align-items:flex-start;margin-top:20px}
-    .case video{width:420px;height:240px;background:#031018;border-radius:10px}
-    .case .desc{flex:1}
-    .cta{margin-top:14px}
-    .btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
-    .btn-primary{background:linear-gradient(90deg,var(--neon),var(--accent));border:none;color:#031026}
-    @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.case{flex-direction:column}.case video{width:100%}}
-    @media (max-width:560px){.grid{grid-template-columns:1fr}}
+    :root {
+      --bg: #07070a;
+      --neon: #00a3ff;
+      --accent: #7b2cff;
+      --muted: #9aa4b2;
+      --glass-border: rgba(255, 255, 255, 0.06);
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(ellipse at 20% 10%, rgba(0, 163, 255, 0.04), transparent 8%),
+                  radial-gradient(ellipse at 80% 90%, rgba(123, 44, 255, 0.03), transparent 12%),
+                  var(--bg);
+      font-family: Inter, system-ui, Arial;
+      color: #e6f0ff;
+    }
+
+    body {
+      padding-top: 70px;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, rgba(7, 7, 10, 0.95), rgba(7, 7, 10, 0.85));
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+      z-index: 1000;
+      padding: 16px 0;
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 18px;
+      background: linear-gradient(90deg, var(--neon), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 32px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--neon);
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 36px;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 36px;
+      margin: 0 0 12px;
+      font-weight: 800;
+      color: #e6f0ff;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    footer {
+      max-width: 1100px;
+      margin: 80px auto 0;
+      padding: 40px 36px;
+      border-top: 1px solid var(--glass-border);
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--neon);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding-top: 60px;
+      }
+
+      .nav-links {
+        gap: 20px;
+      }
+
+      main {
+        padding: 40px 24px;
+      }
+
+      header h1 {
+        font-size: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        gap: 16px;
+        font-size: 12px;
+      }
+
+      main {
+        padding: 30px 16px;
+      }
+
+      header h1 {
+        font-size: 24px;
+      }
+
+      header p {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <nav>
+    <div class="nav-container">
+      <div class="logo">Gururaj Seethur</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="portfolio.html" class="active">Portfolio</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <button class="theme-toggle">☀️ Light</button>
+    </div>
+  </nav>
+
+  <main>
     <header>
-      <div class="eyebrow" style="color:var(--muted);font-size:13px">Portfolio • Selected Work</div>
-      <h1>Selected edits & case studies</h1>
-      <p class="lead">A curated set of short-form videos, automation pipelines, and security-aware projects. Click any item to view details and scope.</p>
+      <div class="eyebrow">Portfolio • Video Editing • Production</div>
+      <h1>Video Editing Portfolio</h1>
+      <p>A curated selection of professional video editing work demonstrating expertise in pacing, color grading, visual storytelling, and post-production. These projects showcase technical precision and creative vision in motion design and content creation.</p>
     </header>
 
-    <div class="filters">
-      <div class="chip">All</div>
-      <div class="chip">Shorts</div>
-      <div class="chip">Automation</div>
-      <div class="chip">Security</div>
-      <div class="chip">Kannada</div>
-    </div>
-
-    <section class="grid" style="margin-top:20px">
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Short+1" alt="Short 1">
-        <div class="meta">
-          <h4>Short: Tech Explainer — 30s</h4>
-          <p>AI script + pro edit optimized for retention and captions.</p>
+    <section class="video-portfolio-section">
+      <div class="video-portfolio-header">
+        <h2>Featured Work</h2>
+        <p>Professional video projects created during my tenure at BrandStory Digital and other agencies. Each project demonstrates mastery of industry-standard editing software, pacing techniques, and narrative structure.</p>
+        <div class="video-portfolio-note">
+          <strong>Note:</strong> These videos are showcased to demonstrate my professional editing capabilities and creative expertise. Original content copyrights belong to their respective media owners and clients.
         </div>
       </div>
 
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Short+2" alt="Short 2">
-        <div class="meta">
-          <h4>Short: Kannada History Clip — 45s</h4>
-          <p>Localized storytelling in Kannada with TTS and animated visuals.</p>
-        </div>
+      <div class="video-portfolio-grid" id="videoPortfolioGrid">
+        <!-- Portfolio items will be populated by JavaScript -->
       </div>
 
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Automation+1" alt="Automation 1">
-        <div class="meta">
-          <h4>Automation: Lead Funnel</h4>
-          <p>n8n pipeline capturing leads → WhatsApp follow-up → Google Sheet logging.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Short+3" alt="Short 3">
-        <div class="meta">
-          <h4>Short: Product Teaser — 20s</h4>
-          <p>Fast cuts, big hooks, thumbnail-first design.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Security+1" alt="Security 1">
-        <div class="meta">
-          <h4>Security: Webhook Harden</h4>
-          <p>Secured webhook handling and HMAC verification for payment callbacks.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="https://via.placeholder.com/640x360?text=Short+4" alt="Short 4">
-        <div class="meta">
-          <h4>Short: Growth Case — 15s</h4>
-          <p>Hook-based format that increased CTR by design (sample mock).</p>
-        </div>
+      <div style="margin-top: 60px; padding: 40px; background: linear-gradient(135deg, rgba(0, 163, 255, 0.05), rgba(123, 44, 255, 0.05)); border-radius: 12px; border: 1px solid var(--glass-border);">
+        <h3 style="margin-top: 0; color: #e6f0ff;">Professional Background</h3>
+        <p style="color: var(--muted); line-height: 1.7; margin-bottom: 0;">
+          During my professional video editing career, I've developed expertise in creating compelling visual narratives for diverse clients and industries. My work spans conceptual ideation through final delivery, with strong capabilities in color grading, motion graphics, audio synchronization, and editing optimization for multiple platforms. I've worked with marketing agencies (BrandStory Digital), online education platforms (upGrad Campus), and digital media agencies (404 DM), delivering polished, broadcast-quality content that drives engagement and achieves client objectives.
+        </p>
       </div>
     </section>
 
-    <section style="margin-top:28px" class="case">
-      <video controls poster="https://via.placeholder.com/640x360?text=Featured+Video">
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="desc">
-        <h3>Featured: Automation + Content Pipeline</h3>
-        <p style="color:var(--muted)">End-to-end system: Idea → AI script → editing → captions → scheduled posting. Built with n8n, TTS, cloud storage and documented hand-off. Reduced turn-around time from 3 days to under 24 hours for repeat packs.</p>
-        <div class="cta"><a class="btn btn-primary" href="mailto:gururajseethur@gmail.com?subject=Portfolio+Inquiry">Discuss a similar project</a></div>
+    <section style="margin-top: 60px;">
+      <h2 style="margin-bottom: 24px; color: #e6f0ff;">Technical Expertise</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="padding: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 10px;">
+          <h4 style="margin: 0 0 8px; color: #e6f0ff;">Editing Software</h4>
+          <p style="margin: 0; font-size: 13px; color: var(--muted);">DaVinci Resolve, Adobe Premiere Pro, Final Cut Pro</p>
+        </div>
+        <div style="padding: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 10px;">
+          <h4 style="margin: 0 0 8px; color: #e6f0ff;">Core Skills</h4>
+          <p style="margin: 0; font-size: 13px; color: var(--muted);">Color Grading, Motion Graphics, Audio Sync, VFX</p>
+        </div>
+        <div style="padding: 16px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 10px;">
+          <h4 style="margin: 0 0 8px; color: #e6f0ff;">Specializations</h4>
+          <p style="margin: 0; font-size: 13px; color: var(--muted);">Short-form Content, Corporate Videos, Social Media</p>
+        </div>
       </div>
     </section>
+  </main>
 
-    <footer style="margin-top:36px;color:var(--muted)">© Gururaj Seethur — Portfolio • 2025</footer>
-  </div>
+  <footer>
+    <p>© 2025 Gururaj Seethur — Professional video editing and production services • <a href="https://www.linkedin.com/in/gururajseethur">LinkedIn</a></p>
+  </footer>
+
+  <script src="youtube-portfolio.js"></script>
+  <script>
+    /**
+     * Sample portfolio data
+     * Update with your actual YouTube video URLs
+     * 
+     * Format: {
+     *   youtubeUrl: "https://www.youtube.com/watch?v=VIDEO_ID",
+     *   title: "Project Title",
+     *   description: "Brief description of the project and techniques used"
+     * }
+     */
+    const portfolioItems = [
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: "Brand Campaign Video",
+        description: "Professional promotional video featuring color grading, transitions, and visual effects."
+      },
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        title: "Short-Form Content",
+        description: "Optimized short-form content for social media with fast-paced editing and captions."
+      },
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: "Educational Video",
+        description: "Clear, engaging educational content with graphics, pacing, and professional audio."
+      },
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        title: "Corporate Storytelling",
+        description: "Compelling narrative-driven video showcasing brand values and mission."
+      },
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        title: "Product Demo",
+        description: "Professional product demonstration with smooth transitions and highlights."
+      },
+      {
+        youtubeUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        title: "Event Highlight Reel",
+        description: "Fast-paced event coverage with music synchronization and dynamic cuts."
+      }
+    ];
+
+    // Render portfolio when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        renderVideoPortfolio('videoPortfolioGrid', portfolioItems);
+      });
+    } else {
+      renderVideoPortfolio('videoPortfolioGrid', portfolioItems);
+    }
+
+    // Initialize theme toggle
+    document.querySelector('.theme-toggle').addEventListener('click', function() {
+      document.documentElement.style.filter = this.innerText.includes('Light') ? 'invert(1)' : 'none';
+      this.innerText = this.innerText.includes('Light') ? '🌙 Dark' : '☀️ Light';
+    });
+  </script>
 </body>
 </html>
