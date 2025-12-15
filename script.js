@@ -353,37 +353,17 @@ function initVideoPortfolio() {
   const container = document.getElementById('videoPortfolioContainer');
   if (!container) return;
 
-  // Sample video portfolio data - Replace with actual YouTube links
+  // Video portfolio data with actual YouTube videos
   const videoPortfolioData = [
     {
-      youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      title: 'Professional Editing Demo',
-      description: 'High-quality post-production work demonstrating color grading, transitions, and audio synchronization.'
+      youtubeUrl: 'https://www.youtube.com/watch?v=WRMQI-KwAX8',
+      title: 'Professional Video Production',
+      description: 'High-quality video editing and post-production work demonstrating technical excellence in color grading, transitions, and audio synchronization.'
     },
     {
-      youtubeUrl: 'https://www.youtube.com/watch?v=9bZkp7q19f0',
-      title: 'Brand Storytelling',
-      description: 'Cinematic narrative production showcasing conceptual development and creative execution.'
-    },
-    {
-      youtubeUrl: 'https://youtu.be/jNQXAC9IVRw',
-      title: 'Commercial Production',
-      description: 'Professional commercial video demonstrating client vision interpretation and technical precision.'
-    },
-    {
-      youtubeUrl: 'https://www.youtube.com/watch?v=tYzD26wJnYQ',
-      title: 'Content Optimization',
-      description: 'Multi-platform video content creation optimized for various distribution channels and audiences.'
-    },
-    {
-      youtubeUrl: 'https://www.youtube.com/watch?v=8jwH_yKuWqI',
-      title: 'Motion Graphics Integration',
-      description: 'Seamless integration of motion graphics, text animation, and visual effects for enhanced storytelling.'
-    },
-    {
-      youtubeUrl: 'https://www.youtube.com/watch?v=ZyhrYis509A',
-      title: 'Documentary Style Production',
-      description: 'Long-form narrative content with interview integration and atmospheric sound design.'
+      youtubeUrl: 'https://www.youtube.com/watch?v=j93eQpQKyzU',
+      title: 'Creative Content Production',
+      description: 'Professional content creation showcasing narrative structure, visual composition, and editing precision for engaging storytelling.'
     }
   ];
 
