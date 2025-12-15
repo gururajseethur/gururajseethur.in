@@ -313,6 +313,136 @@ function initPageTransitions() {
   });
 }
 
+// ===== VIDEO PORTFOLIO UTILITIES =====
+// Extract YouTube video ID from various URL formats
+function extractYouTubeVideoId(url) {
+  if (!url) return null;
+  
+  // Handle different YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /^([a-zA-Z0-9_-]{11})$/ // Direct video ID (11 characters)
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+// Generate YouTube thumbnail URL with fallback strategy
+function getYouTubeThumbnailUrl(videoId, quality = 'hq') {
+  if (!videoId) return null;
+  
+  const qualityMap = {
+    'max': `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    'sd': `https://img.youtube.com/vi/${videoId}/sddefault.jpg`,
+    'hq': `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+    'mq': `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+    'default': `https://img.youtube.com/vi/${videoId}/default.jpg`
+  };
+  
+  return qualityMap[quality] || qualityMap['hq'];
+}
+
+// Initialize video portfolio with lazy loading
+function initVideoPortfolio() {
+  const container = document.getElementById('videoPortfolioContainer');
+  if (!container) return;
+
+  // Sample video portfolio data - Replace with actual YouTube links
+  const videoPortfolioData = [
+    {
+      youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      title: 'Professional Editing Demo',
+      description: 'High-quality post-production work demonstrating color grading, transitions, and audio synchronization.'
+    },
+    {
+      youtubeUrl: 'https://www.youtube.com/watch?v=9bZkp7q19f0',
+      title: 'Brand Storytelling',
+      description: 'Cinematic narrative production showcasing conceptual development and creative execution.'
+    },
+    {
+      youtubeUrl: 'https://youtu.be/jNQXAC9IVRw',
+      title: 'Commercial Production',
+      description: 'Professional commercial video demonstrating client vision interpretation and technical precision.'
+    },
+    {
+      youtubeUrl: 'https://www.youtube.com/watch?v=tYzD26wJnYQ',
+      title: 'Content Optimization',
+      description: 'Multi-platform video content creation optimized for various distribution channels and audiences.'
+    },
+    {
+      youtubeUrl: 'https://www.youtube.com/watch?v=8jwH_yKuWqI',
+      title: 'Motion Graphics Integration',
+      description: 'Seamless integration of motion graphics, text animation, and visual effects for enhanced storytelling.'
+    },
+    {
+      youtubeUrl: 'https://www.youtube.com/watch?v=ZyhrYis509A',
+      title: 'Documentary Style Production',
+      description: 'Long-form narrative content with interview integration and atmospheric sound design.'
+    }
+  ];
+
+  // Generate portfolio cards
+  videoPortfolioData.forEach(item => {
+    const videoId = extractYouTubeVideoId(item.youtubeUrl);
+    if (!videoId) return;
+
+    const thumbnailUrl = getYouTubeThumbnailUrl(videoId, 'hq');
+    
+    const card = document.createElement('a');
+    card.className = 'video-portfolio-card';
+    card.href = item.youtubeUrl;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    card.setAttribute('title', `Watch: ${item.title}`);
+    
+    card.innerHTML = `
+      <img 
+        class="video-portfolio-card-image" 
+        src="${thumbnailUrl}" 
+        alt="${item.title}"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="video-portfolio-card-play-icon"></div>
+      <div class="video-portfolio-card-overlay">
+        <h3 class="video-portfolio-card-title">${item.title}</h3>
+        <p class="video-portfolio-card-description">${item.description}</p>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+
+  // Implement lazy loading with intersection observer
+  const images = container.querySelectorAll('.video-portfolio-card-image');
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        // Image is already in src due to simplicity, but we can add loading state
+        img.style.opacity = '1';
+        observer.unobserve(img);
+      }
+    });
+  }, {
+    rootMargin: '50px'
+  });
+
+  images.forEach(img => {
+    img.style.opacity = '0.8';
+    img.style.transition = 'opacity 0.3s ease-out';
+    imageObserver.observe(img);
+  });
+}
+
+// ===== PAGE TRANSITIONS =====
+
 // ===== INIT ALL =====
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
@@ -324,5 +454,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initLazyLoad();
   initParallax();
   animateCounters();
+  initVideoPortfolio();
   initPageTransitions();
 });
