@@ -50,8 +50,8 @@
     .stat-card:hover { background: linear-gradient(135deg, rgba(0, 163, 255, 0.1), rgba(123, 44, 255, 0.08)); border-color: var(--neon); transform: translateY(-4px); }
     .stat-number { font-size: 32px; font-weight: 800; color: var(--neon); margin-bottom: 8px; }
     .stat-label { font-size: 13px; color: var(--muted); }
-    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 40px 0; }
-    .service-card { padding: 28px; border-radius: 14px; background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0.01)); border: 1px solid var(--glass-border); transition: var(--transition); position: relative; overflow: hidden; }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin: 40px 0 60px 0; }
+    .service-card { padding: 28px; border-radius: 14px; background: rgba(15, 19, 23, 0.8); border: 1px solid var(--glass-border); transition: var(--transition); position: relative; overflow: hidden; min-height: 300px; display: flex; flex-direction: column; }
     .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--neon), var(--accent), transparent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
     .service-card:hover { border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 12px 48px rgba(0, 163, 255, 0.08); transform: translateY(-4px); }
     .service-card:hover::before { transform: scaleX(1); }
