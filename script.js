@@ -429,7 +429,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initForms();
   initModals();
-  initThemeToggle();
   initCopyButtons();
   initLazyLoad();
   initParallax();
