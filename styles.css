@@ -188,8 +188,9 @@ p {
 
 .lead {
   font-size: clamp(14px, 2vw, 18px);
-  line-height: 1.6;
+  line-height: 1.8;
   max-width: 680px;
+  letter-spacing: 0.3px;
 }
 
 /* ===== LAYOUT ===== */

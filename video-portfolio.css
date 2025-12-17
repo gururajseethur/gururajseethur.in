@@ -157,7 +157,7 @@
  * Empty State
  */
 .video-portfolio-empty {
-  padding: 60px 40px;
+  padding: 20px 10px;
   text-align: center;
   color: var(--muted);
 }
