@@ -1,0 +1,53 @@
+backend:
+  name: github
+  repo: gururajseethur/gururajseethur.in
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  # ─── Projects ─────────────────────────────────────────────
+  - name: "projects"
+    label: "Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Tools", name: "tools", widget: "list", field: { label: "Tool", name: "tool", widget: "string" } }
+      - { label: "GitHub Link", name: "github_link", widget: "string", required: false }
+      - { label: "Demo Link", name: "demo_link", widget: "string", required: false }
+      - { label: "Thumbnail", name: "thumbnail", widget: "image", required: false }
+      - { label: "Status", name: "status", widget: "select", options: ["Active", "Deployed", "Archived"], default: "Active" }
+      - { label: "Category", name: "category", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+
+  # ─── Blog ─────────────────────────────────────────────────
+  - name: "blog"
+    label: "Blog"
+    folder: "content/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Cover Image", name: "cover_image", widget: "image", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  # ─── Videos ───────────────────────────────────────────────
+  - name: "videos"
+    label: "Videos"
+    folder: "content/videos"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "YouTube Embed Link", name: "youtube_embed_link", widget: "string", hint: "Paste full YouTube embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Thumbnail", name: "thumbnail", widget: "image", required: false }
+      - { label: "Date", name: "date", widget: "datetime" }
