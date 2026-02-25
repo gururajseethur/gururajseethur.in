@@ -10,10 +10,10 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div className="px-5 md:px-8 py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="font-sans text-3xl font-bold text-white mb-4">Post not found</h1>
-          <Link to="/blog" className="text-cyan-400 hover:text-cyan-300 font-sans text-sm">
+    <div className="page-panel px-5 md:px-8 pt-24 md:pt-28 py-16 md:py-24">
+      <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-3xl font-bold text-fg mb-4">Post not found</h1>
+          <Link to="/blog" className="text-accent hover:underline text-sm">
             ← Back to Blog
           </Link>
         </div>
@@ -24,10 +24,10 @@ export default function BlogPostPage() {
   const { attributes, body } = post;
 
   return (
-    <div className="px-5 md:px-8 py-16 md:py-24">
+    <div className="page-panel px-5 md:px-8 pt-24 md:pt-28 py-16 md:py-24">
       <div className="max-w-3xl mx-auto">
         <ScrollReveal>
-          <Link to="/blog" className="font-sans text-xs text-white/25 hover:text-cyan-400 transition-colors uppercase tracking-widest mb-8 inline-block">
+          <Link to="/blog" className="font-mono text-xs text-fg-muted hover:text-accent transition-colors uppercase tracking-widest mb-8 inline-block">
             ← Back to Blog
           </Link>
 
@@ -41,7 +41,7 @@ export default function BlogPostPage() {
 
           <div className="accent-line mb-6" />
 
-          <span className="font-sans text-xs text-white/25 uppercase tracking-widest font-medium">
+          <span className="font-mono text-xs text-fg-muted uppercase tracking-widest font-medium">
             {attributes.date
               ? new Date(attributes.date).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -51,13 +51,13 @@ export default function BlogPostPage() {
               : ''}
           </span>
 
-          <h1 className="font-sans text-3xl md:text-4xl font-bold text-white mt-2 mb-10 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-fg mt-2 mb-10 tracking-tight">
             {attributes.title}
           </h1>
         </ScrollReveal>
 
         <ScrollReveal delay={100}>
-          <div className="glass-card p-7 md:p-10">
+          <div className="solid-card p-7 md:p-10">
             <MarkdownRenderer content={body} />
           </div>
         </ScrollReveal>

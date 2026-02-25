@@ -47,7 +47,14 @@ collections:
     extension: "md"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "YouTube Embed Link", name: "youtube_embed_link", widget: "string", hint: "Paste full YouTube embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID" }
+      - { label: "Access Type", name: "access_type", widget: "select", options: ["public", "private"], default: "private" }
+      - { label: "YouTube Embed Link", name: "youtube_embed_link", widget: "string", required: false, hint: "For public videos only. Use embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID" }
       - { label: "Description", name: "description", widget: "text" }
+      - { label: "Client / Project", name: "client_or_project", widget: "string", required: false }
+      - { label: "Role", name: "role", widget: "string", required: false }
+      - { label: "Tools Used", name: "tools_used", widget: "list", required: false, field: { label: "Tool", name: "tool", widget: "string" } }
+      - { label: "Outcome", name: "outcome", widget: "string", required: false }
+      - { label: "Private Preview Note", name: "private_preview_note", widget: "text", required: false }
+      - { label: "Proof / Credential Link", name: "proof_link", widget: "string", required: false }
       - { label: "Thumbnail", name: "thumbnail", widget: "image", required: false }
       - { label: "Date", name: "date", widget: "datetime" }
