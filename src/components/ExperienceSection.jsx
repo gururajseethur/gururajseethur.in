@@ -1,210 +1,249 @@
-import React from 'react';
-import ScrollReveal from './ScrollReveal';
+import React, { useRef, useState, useEffect } from 'react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
-const experiences = [
+const EXPERIENCES = [
   {
+    num: '01', year: '2025',
     company: 'CreditAccess Grameen Limited',
-    domain: 'Microfinance · NBFC-MFI',
     role: 'Assistant Manager, Branding & Communications',
-    start: '2024-09',
-    end: null,
-    location: 'Bengaluru',
+    type: 'creative',
+    location: 'Bengaluru, India',
+    period: 'Sep 2024 – Present',
     current: true,
     bullets: [
-      'Sole video lead — scripting, shooting, editing, and delivery for all corporate and campaign content',
-      'Built and run the internal + external comms pipeline: social, digital, corporate events, annual report videos',
-      'Manage vendor relationships and cross-functional briefs across marketing, HR, and CSR teams',
+      'Sole video lead — end-to-end corporate & campaign content across all formats.',
+      'Own internal + external comms: social, digital, events, annual reports.',
     ],
-    highlight: { label: 'Employee of the Quarter', detail: 'Apr–Jun 2025' },
-    tools: ['Premiere Pro', 'After Effects', 'DaVinci Resolve'],
   },
   {
+    num: '02', year: '2023',
     company: 'BrandStory Digital',
-    domain: 'Digital Marketing Agency',
     role: 'Video Editor',
-    start: '2023-05',
-    end: '2024-09',
-    location: 'Bengaluru',
+    type: 'creative',
+    location: 'Bengaluru, India',
+    period: 'May 2023 – Sep 2024',
     current: false,
     bullets: [
-      '200+ videos delivered across corporate, product, and social campaigns for 15+ clients',
-      'Full post-production ownership: assembly, colour grading, audio mix, and motion graphics',
-      'Ran concurrent briefs with avg. 48-hour turnaround — zero missed deadlines',
+      '200+ videos delivered for 15+ clients — zero missed deadlines.',
+      'Full post: assembly, colour grading, audio mix, motion graphics.',
     ],
-    tools: ['Premiere Pro', 'After Effects', 'Photoshop'],
   },
   {
+    num: '03', year: '2023',
     company: '404 DM',
-    domain: 'Digital Marketing Agency',
     role: 'Video Editor',
-    start: '2023-02',
-    end: '2023-05',
-    location: 'Bengaluru',
+    type: 'creative',
+    location: 'Remote',
+    period: 'Feb 2023 – May 2023',
     current: false,
     bullets: [
-      'Brand and services marketing videos — brief to final cut',
-      'Worked directly with creative directors on campaign concepts',
+      'Brand & services marketing videos — brief to final cut.',
     ],
   },
   {
+    num: '04', year: '2022',
     company: 'upGrad Campus',
-    domain: 'EdTech',
     role: 'Video Editor',
-    start: '2022-08',
-    end: '2022-12',
-    location: 'Bengaluru',
+    type: 'creative',
+    location: 'Mumbai, India (Remote)',
+    period: 'Aug 2022 – Dec 2022',
     current: false,
     bullets: [
-      'Edited course content and marketing videos at scale',
-      'Created repeatable templates that standardised video output across the brand',
+      'Course content & marketing videos; built reusable motion templates at scale.',
     ],
   },
   {
+    num: '05', year: '2021',
     company: 'Dhiyo.ai',
-    domain: 'AI · HR Tech',
     role: 'Intern',
-    start: '2021-03',
-    end: '2022-05',
-    location: 'Bengaluru',
+    type: 'creative',
+    location: 'Bengaluru, India',
+    period: 'Mar 2021 – May 2022',
     current: false,
     bullets: [
-      'First professional role — content production, social assets, product marketing support',
+      'Content production, social assets & product marketing support.',
     ],
   },
 ];
 
-/* ── Date utilities ── */
-function formatTenure(start, end) {
-  const s = new Date(start + '-01');
-  const e = end ? new Date(end + '-01') : new Date();
-  let months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
-  if (months < 1) months = 1;
-  const y = Math.floor(months / 12);
-  const m = months % 12;
-  if (y > 0 && m > 0) return `${y} yr ${m} mo`;
-  if (y > 0) return `${y} yr${y > 1 ? 's' : ''}`;
-  return `${m} mo`;
-}
+function ExperienceEntry({ exp, index }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
-function formatPeriod(start, end) {
-  const fmt = (d) => {
-    const [y, mo] = d.split('-');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${months[parseInt(mo, 10) - 1]} ${y}`;
-  };
-  return `${fmt(start)} – ${end ? fmt(end) : 'Present'}`;
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.unobserve(entry.target); } },
+      { threshold: 0.15 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const accentColor = exp.type === 'security' ? '#00D9FF' : '#FF3B3B';
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative',
+        padding: '32px 0 32px 32px',
+        borderBottom: '1px solid #0E0E12',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateX(0)' : 'translateX(40px)',
+        background: hovered ? '#0E0E12' : 'transparent',
+        borderLeft: `2px solid ${hovered ? accentColor : 'transparent'}`,
+        transition: `opacity 600ms cubic-bezier(0.16,1,0.3,1) ${index * 80}ms, transform 600ms cubic-bezier(0.16,1,0.3,1) ${index * 80}ms, background 0.2s ease, border-left-color 0.2s ease`,
+      }}
+    >
+      {/* Ghost entry number */}
+      <div style={{
+        position: 'absolute', left: -48, top: 32,
+        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 80,
+        color: '#0A0A0E', lineHeight: 1, userSelect: 'none', pointerEvents: 'none',
+        zIndex: 0,
+      }}>
+        {exp.num}
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Top row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <h3 style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 22, color: '#FFFFFF', margin: 0 }}>
+              {exp.company}
+            </h3>
+            {exp.current && (
+              <span style={{
+                fontFamily: 'var(--font-mono)', fontSize: 10,
+                background: 'rgba(0,217,255,0.08)',
+                border: '1px solid #00D9FF', color: '#00D9FF',
+                padding: '2px 8px', borderRadius: 4,
+              }}>
+                CURRENT
+              </span>
+            )}
+          </div>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#555' }}>
+            {exp.period}
+          </span>
+        </div>
+
+        {/* Role */}
+        <p style={{ fontSize: 16, color: accentColor, margin: '6px 0 4px', fontWeight: 500 }}>
+          {exp.role}
+        </p>
+
+        {/* Location */}
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#444', marginBottom: 12 }}>
+          {exp.location}
+        </p>
+
+        {/* Bullets */}
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {exp.bullets.slice(0, 2).map((b, i) => (
+            <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span style={{ color: accentColor, opacity: 0.5, fontSize: 10, marginTop: 5, flexShrink: 0 }}>▶</span>
+              <span style={{ fontSize: 16, color: '#888', lineHeight: 1.8 }}>{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default function ExperienceSection() {
+  const sectionRef = useScrollReveal();
+  const [activeYear, setActiveYear] = useState('2025');
+  const entryRefs = useRef([]);
+
+  useEffect(() => {
+    const observers = EXPERIENCES.map((exp, i) => {
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveYear(exp.year); },
+        { threshold: 0.5 }
+      );
+      if (entryRefs.current[i]) obs.observe(entryRefs.current[i]);
+      return obs;
+    });
+    return () => observers.forEach(o => o.disconnect());
+  }, []);
+
   return (
-    <section id="experience" className="px-5 md:px-8 py-20">
+    <section
+      id="experience"
+      ref={sectionRef}
+      style={{ padding: '120px max(48px, 5vw)' }}
+    >
       <div className="max-w-content mx-auto">
-        <ScrollReveal>
-          <div className="section-label">Experience</div>
-          <div className="accent-line mb-6" />
-          <h2 className="text-2xl md:text-3xl font-bold text-fg mb-4 tracking-tight">
-            Work History
-          </h2>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-12">
-            {[
-              { value: '5', label: 'companies' },
-              { value: '5', label: 'years' },
-              { value: '3', label: 'domains' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-baseline gap-1.5">
-                <span className="text-lg font-bold text-accent">{stat.value}</span>
-                <span className="font-mono text-xs text-fg-muted">{stat.label}</span>
-              </div>
-            ))}
-            <span className="font-mono text-xs text-fg-muted hidden sm:inline">·</span>
-            <span className="font-mono text-xs text-fg-muted hidden sm:inline">Intern → Asst. Manager</span>
+        {/* Header */}
+        <div style={{ marginBottom: 80 }}>
+          <div data-reveal style={{
+            display: 'inline-block',
+            fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+            border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+            marginBottom: 24,
+          }}>
+            // 02 EXPERIENCE
           </div>
-        </ScrollReveal>
+          <h2 data-reveal data-delay="100" style={{
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            fontSize: 'clamp(36px,5vw,56px)', color: '#FFFFFF',
+            letterSpacing: '-0.03em', lineHeight: 1.1, margin: 0,
+          }}>
+            The Story So Far.
+          </h2>
+        </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line — left on mobile, center on desktop */}
-          <div className="timeline-line" />
+        {/* Two-column layout */}
+        <div style={{ display: 'grid', gridTemplateColumns: '35fr 65fr', gap: 40, alignItems: 'start' }}>
 
-          <div className="space-y-12 md:space-y-16">
-            {experiences.map((exp, i) => (
-              <ScrollReveal key={exp.company + exp.start} delay={i * 80}>
-                <div className={`relative pl-12 md:pl-0 ${
-                  i % 2 === 0 ? 'md:pr-[calc(50%+40px)]' : 'md:pl-[calc(50%+40px)]'
-                }`}>
-                  {/* Timeline dot */}
-                  <div className={`absolute left-[16px] top-7 w-2.5 h-2.5 rounded-full border-2 border-base md:left-1/2 md:-translate-x-1/2 z-10 transition-colors ${
-                    exp.current
-                      ? 'bg-accent shadow-[0_0_8px_rgba(0,217,255,0.5)]'
-                      : 'bg-fg-muted'
-                  }`} />
+          {/* Left: sticky year */}
+          <div style={{ position: 'sticky', top: '30vh' }}>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              {/* Filled year */}
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900,
+                fontSize: 120, lineHeight: 1,
+                color: '#0E0E12',
+                userSelect: 'none',
+                transition: 'color 0.3s ease',
+              }}>
+                {activeYear}
+              </div>
+              {/* Outlined overlay */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                fontFamily: 'var(--font-display)', fontWeight: 900,
+                fontSize: 120, lineHeight: 1,
+                WebkitTextStroke: '1px #1C1C24',
+                color: 'transparent',
+                userSelect: 'none',
+              }}>
+                {activeYear}
+              </div>
+            </div>
 
-                  {/* Card */}
-                  <div className={`solid-card p-6 md:p-7 max-w-[520px] ${
-                    i % 2 === 0 ? 'md:ml-auto' : ''
-                  } ${
-                    exp.current ? 'border-accent/20' : ''
-                  }`}>
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-3 mb-1">
-                      <div className="min-w-0">
-                        <h3 className="text-base md:text-lg font-bold text-fg leading-snug">
-                          {exp.company}
-                        </h3>
-                        <p className="font-mono text-[11px] text-fg-muted mt-0.5">{exp.domain}</p>
-                      </div>
-                      {exp.current && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-accent/30 shrink-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                          <span className="font-mono text-[0.6rem] text-accent leading-none">CURRENT</span>
-                        </span>
-                      )}
-                    </div>
+            {/* Progress bar */}
+            <div style={{ width: 2, height: 200, background: '#1C1C24', marginTop: 16, borderRadius: 1, overflow: 'hidden' }}>
+              <div style={{
+                width: '100%',
+                height: `${((5 - EXPERIENCES.findIndex(e => e.year === activeYear)) / 5) * 100}%`,
+                background: 'linear-gradient(to bottom, #00D9FF, #FF3B3B)',
+                transition: 'height 0.4s ease',
+              }} />
+            </div>
+          </div>
 
-                    {/* Role */}
-                    <p className="text-sm text-accent font-medium mb-3">{exp.role}</p>
-
-                    {/* Period · Tenure · Location */}
-                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 font-mono text-xs text-fg-muted mb-4">
-                      <span>{formatPeriod(exp.start, exp.end)}</span>
-                      <span className="text-edge">·</span>
-                      <span>{formatTenure(exp.start, exp.end)}</span>
-                      <span className="text-edge">·</span>
-                      <span>{exp.location}</span>
-                    </div>
-
-                    {/* Bullets */}
-                    <ul className="space-y-2">
-                      {exp.bullets.map((bullet, bi) => (
-                        <li key={bi} className="flex items-start gap-2.5">
-                          <span className="text-accent/40 mt-[3px] text-xs shrink-0 select-none">▹</span>
-                          <span className="text-sm text-fg-secondary leading-relaxed">{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Award callout */}
-                    {exp.highlight && (
-                      <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-base border border-accent/15 mt-4">
-                        <span className="text-sm select-none">🏆</span>
-                        <div>
-                          <span className="text-sm text-fg font-medium">{exp.highlight.label}</span>
-                          <span className="text-fg-muted text-xs ml-2">{exp.highlight.detail}</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Tools */}
-                    {exp.tools && (
-                      <div className="flex flex-wrap gap-1.5 mt-4">
-                        {exp.tools.map(t => (
-                          <span key={t} className="font-mono text-[11px] px-2.5 py-1 rounded border border-edge text-fg-muted">{t}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </ScrollReveal>
+          {/* Right: entries */}
+          <div style={{ paddingTop: 4 }}>
+            {EXPERIENCES.map((exp, i) => (
+              <div key={exp.company} ref={el => entryRefs.current[i] = el}>
+                <ExperienceEntry exp={exp} index={i} />
+              </div>
             ))}
           </div>
         </div>

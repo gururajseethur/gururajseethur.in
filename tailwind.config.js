@@ -11,19 +11,19 @@ export default {
       colors: {
         /* ── Backgrounds ── */
         base: '#0A0A0A',
-        surface: '#111111',
+        surface: '#0F0F0F',
 
-        /* ── Foreground / text ── */
+        /* ── Foreground / text — NEVER below #555 on dark bg ── */
         fg: {
           DEFAULT: '#FAFAFA',
-          secondary: '#888888',
-          muted: '#444444',
-          faint: '#333333',
+          secondary: '#999999',
+          muted: '#666666',
+          faint: '#555555',
         },
 
         /* ── Edges / borders ── */
         edge: {
-          DEFAULT: '#222222',
+          DEFAULT: '#1E1E1E',
           subtle: '#1A1A1A',
           strong: '#333333',
         },
@@ -41,10 +41,14 @@ export default {
       },
       fontSize: {
         micro: ['0.6875rem', { lineHeight: '1rem' }],
+        body: ['17px', { lineHeight: '1.8' }],
+        'card-title': ['22px', { lineHeight: '1.3' }],
+        'section-heading': ['clamp(40px, 5vw, 56px)', { lineHeight: '1.1' }],
+        'hero-heading': ['clamp(64px, 9vw, 96px)', { lineHeight: '1.05' }],
       },
       animation: {
         'cursor-blink': 'blink 1s step-end infinite',
-        'fade-in-up': 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       keyframes: {
         blink: {
@@ -52,7 +56,7 @@ export default {
           '50%': { opacity: '0' },
         },
         fadeInUp: {
-          from: { opacity: '0', transform: 'translateY(20px)' },
+          from: { opacity: '0', transform: 'translateY(24px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
       },

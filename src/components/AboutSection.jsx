@@ -1,176 +1,249 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import ScrollReveal from './ScrollReveal';
-import useTryHackMeStats from '../hooks/useTryHackMeStats';
+import React, { useRef, useEffect, useState } from 'react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
-const creativeSkills = [
-  'Video Editing',
-  'Colour Grading',
-  'Audio Editing',
-  'Motion Graphics',
-  'Storytelling',
-  'Brand Filmmaking',
-  'Content Strategy',
-];
+const CREATIVE_TAGS = ['Video Editing','Colour Grading','Motion Graphics','Storytelling','Brand Filmmaking','Audio Design'];
+const SECURITY_TAGS = ['Penetration Testing','Nmap','Metasploit','Burp Suite','Linux','Docker','Python','CTF'];
 
-const securitySkills = [
-  'Linux Fundamentals',
-  'Network Security',
-  'TCP/IP Suite',
-  'Vulnerability Assessment',
-  'Ethical Hacking',
-  'Penetration Testing',
-  'Information Security',
-  'Cybersecurity Awareness',
-];
-
-export default function AboutSection() {
-  const { roomCount, loading, error, fetchedAt, source } = useTryHackMeStats();
-  const roomLabel = Number.isFinite(roomCount) ? `${roomCount}` : '70';
-  const [nowTs, setNowTs] = useState(Date.now());
+function AvatarOrb() {
+  const mountRef = useRef(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setNowTs(Date.now()), 1000);
-    return () => clearInterval(timer);
+    let frameId;
+    const canvas = mountRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width  = 360;
+    const H = canvas.height = 200;
+    let t = 0;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#0E0E12';
+      ctx.fillRect(0, 0, W, H);
+
+      // Two orbiting dots + glow
+      const cx = W / 2, cy = H / 2;
+      const orbit = 60;
+
+      // Red dot
+      const rx = cx + Math.cos(t * 0.8) * orbit;
+      const ry = cy + Math.sin(t * 0.8) * (orbit * 0.4);
+      const rg1 = ctx.createRadialGradient(rx, ry, 0, rx, ry, 40);
+      rg1.addColorStop(0, 'rgba(255,59,59,0.5)');
+      rg1.addColorStop(1, 'rgba(255,59,59,0)');
+      ctx.beginPath(); ctx.arc(rx, ry, 40, 0, Math.PI * 2);
+      ctx.fillStyle = rg1; ctx.fill();
+      ctx.beginPath(); ctx.arc(rx, ry, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#FF3B3B'; ctx.fill();
+
+      // Cyan dot
+      const bx = cx + Math.cos(t * 0.8 + Math.PI) * orbit;
+      const by = cy + Math.sin(t * 0.8 + Math.PI) * (orbit * 0.4);
+      const rg2 = ctx.createRadialGradient(bx, by, 0, bx, by, 40);
+      rg2.addColorStop(0, 'rgba(0,217,255,0.4)');
+      rg2.addColorStop(1, 'rgba(0,217,255,0)');
+      ctx.beginPath(); ctx.arc(bx, by, 40, 0, Math.PI * 2);
+      ctx.fillStyle = rg2; ctx.fill();
+      ctx.beginPath(); ctx.arc(bx, by, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#00D9FF'; ctx.fill();
+
+      // Center glow
+      const rg3 = ctx.createRadialGradient(cx, cy, 0, cx, cy, 20);
+      rg3.addColorStop(0, 'rgba(255,255,255,0.15)');
+      rg3.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath(); ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+      ctx.fillStyle = rg3; ctx.fill();
+
+      t += 0.02;
+      frameId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
-  const syncedAgoLabel = useMemo(() => {
-    if (!fetchedAt) return 'Last synced: pending';
-    const synced = new Date(fetchedAt).getTime();
-    if (!Number.isFinite(synced)) return 'Last synced: pending';
-    const diffSec = Math.max(0, Math.floor((nowTs - synced) / 1000));
-    if (diffSec < 60) return `Last synced ${diffSec}s ago`;
-    const mins = Math.floor(diffSec / 60);
-    const secs = diffSec % 60;
-    return `Last synced ${mins}m ${secs}s ago`;
-  }, [fetchedAt, nowTs]);
+  return <canvas ref={mountRef} style={{ width: '100%', height: '200px', display: 'block' }} />;
+}
+
+function SkillTag({ label, type }) {
+  const [hovered, setHovered] = useState(false);
+  const color = type === 'creative' ? '#FF3B3B' : '#00D9FF';
+  return (
+    <span
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        fontFamily: 'var(--font-mono)', fontSize: 11,
+        border: `1px solid ${hovered ? color : '#1C1C24'}`,
+        color: hovered ? color : '#50505A',
+        padding: '4px 10px', borderRadius: 4,
+        transition: 'all 0.15s ease',
+        display: 'inline-block',
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function AvatarCard() {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const cardRef = useRef(null);
+
+  const onMove = (e) => {
+    const r = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    setTilt({ x: y * 6, y: x * -10 });
+  };
 
   return (
-    <section id="about" className="px-5 md:px-8 py-20">
+    <div style={{ position: 'relative', width: 360, height: 420, margin: '0 auto' }}>
+      {/* Glow layers */}
+      <div style={{
+        position: 'absolute', top: -60, right: -60, width: 300, height: 300,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,59,59,0.12) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: -60, left: -60, width: 250, height: 250,
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(0,217,255,0.1) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Card */}
+      <div
+        ref={cardRef}
+        onMouseMove={onMove}
+        onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+        style={{
+          width: '100%', height: '100%',
+          background: 'linear-gradient(135deg, #0E0E12, #12121A)',
+          border: '1px solid #1C1C24',
+          borderRadius: 24,
+          overflow: 'hidden',
+          position: 'relative',
+          transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: tilt.x === 0 ? 'transform 0.3s ease' : 'transform 0.1s ease',
+        }}
+      >
+        {/* Top: orbit animation */}
+        <AvatarOrb />
+
+        {/* Bottom: identity */}
+        <div style={{
+          padding: '24px', textAlign: 'center',
+          borderTop: '1px solid #1C1C24',
+        }}>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 96, lineHeight: 1,
+            background: 'linear-gradient(135deg, #FF3B3B, #00D9FF)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            GS
+          </div>
+          <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>
+            Gururaj Seethur
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#50505A', marginTop: 4 }}>
+            Filmmaker · Ethical Hacker
+          </div>
+          <div style={{
+            display: 'inline-block', marginTop: 12,
+            fontFamily: 'var(--font-mono)', fontSize: 11, color: '#444',
+            border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+          }}>
+            📍 Bengaluru, India
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AboutSection() {
+  const sectionRef = useScrollReveal();
+
+  return (
+    <section
+      id="about"
+      ref={sectionRef}
+      style={{ padding: '120px max(48px, 5vw)', position: 'relative' }}
+    >
       <div className="max-w-content mx-auto">
-        <ScrollReveal>
-          <div className="section-label">About</div>
-          <div className="accent-line mb-6" />
-          <h2 className="text-2xl md:text-3xl font-bold text-fg mb-4 tracking-tight">
-            Most people choose between creativity and technology.
-            <span className="text-accent"> I didn't.</span>
-          </h2>
-        </ScrollReveal>
+        <div style={{ display: 'grid', gridTemplateColumns: '55fr 45fr', gap: 80, alignItems: 'start' }}>
 
-        <ScrollReveal delay={100}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+          {/* ── Left column ── */}
+          <div>
+            {/* Section pill */}
+            <div
+              data-reveal
+              style={{
+                display: 'inline-block',
+                fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+                border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+                marginBottom: 40,
+              }}
+            >
+              // 01 ABOUT
+            </div>
+
+            {/* Declaration */}
+            <div data-reveal data-delay="100" style={{ marginBottom: 32 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,4vw,52px)', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <span style={{ fontWeight: 700, color: '#FFFFFF' }}>I craft stories</span><br />
+                <span style={{ fontWeight: 300, color: '#888' }}>with cameras,</span><br />
+                <span style={{ fontWeight: 700, color: '#FFFFFF' }}>and exploit systems</span><br />
+                <span style={{ fontWeight: 300, color: '#888' }}>with terminals.</span>
+              </div>
+            </div>
+
             {/* Bio */}
-            <div className="space-y-5">
-              <p className="text-sm text-fg-secondary leading-relaxed">
-                With <span className="text-danger font-medium">4+ years of professional video editing</span> and{' '}
-                <span className="text-fg font-medium">5 years of total experience</span>,
-                I've built a career at the intersection of cinema and cybersecurity — two worlds
-                that share more than people think: pattern recognition, creative problem-solving,
-                and an obsession with detail.
+            <div data-reveal data-delay="200">
+              <p style={{ fontSize: 17, color: '#888', lineHeight: 1.7, marginBottom: 4 }}>
+                Currently: Assistant Manager, CreditAccess Grameen.
               </p>
-              <p className="text-sm text-fg-secondary leading-relaxed">
-                Currently serving as <span className="text-fg font-medium">Assistant Manager,
-                Branding &amp; Communications</span> at CreditAccess Grameen Limited, where I lead
-                video production for India's leading microfinance brand. Simultaneously pursuing a{' '}
-                <span className="text-accent font-medium">Master-Diploma in Cyber Security &amp;
-                Ethical Hacking</span> from Boston Institute of Analytics.
-              </p>
-              <p className="text-sm text-fg-secondary leading-relaxed">
-                On the security side, I'm deep into network security — managing network switches,
-                mastering the Internet Protocol Suite, and chasing flags on TryHackMe.
+              <p style={{ fontSize: 17, color: '#888', lineHeight: 1.7 }}>
+                Simultaneously: Master-Diploma in Ethical Hacking, Boston.
               </p>
 
-              {/* Quick stats */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                {[
-                  { value: '5', label: 'Years Experience' },
-                  { value: '200+', label: 'Videos Delivered' },
-                  {
-                    value: roomLabel,
-                    label: 'TryHackMe Rooms',
-                    live: true,
-                    state: loading ? 'SYNCING' : (error ? 'CACHED' : 'LIVE'),
-                  },
-                  { value: 'CEH', label: 'Certified' },
-                ].map((stat) => (
-                  <div key={stat.label} className="solid-card px-4 py-3 text-center">
-                    <div className="text-lg font-bold text-accent">{stat.value}</div>
-                    <div className="font-mono text-[10px] text-fg-muted uppercase tracking-wider">{stat.label}</div>
-                    {stat.live && (
-                      <>
-                        <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-accent/25 bg-accent/[0.05]">
-                          <span className="status-dot" style={{ width: 5, height: 5 }} />
-                          <span className="font-mono text-[9px] text-accent uppercase tracking-widest">{stat.state}</span>
-                        </div>
-                        <div className="thm-sync-ticker mt-1 font-mono text-[9px] text-fg-muted uppercase tracking-widest">
-                          {syncedAgoLabel} · {source === 'cache' ? 'cache' : 'live'}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
+              {/* Award badge */}
+              <p style={{
+                fontFamily: 'var(--font-mono)', fontSize: 12, color: '#FF3B3B',
+                marginTop: 24,
+              }}>
+                🏆 Employee of the Quarter · Apr–Jun 2025 · CreditAccess
+              </p>
             </div>
 
-            {/* Code Block */}
-            <div className="flex items-start">
-              <div className="solid-card p-6 w-full">
-                <div className="font-mono text-xs text-fg-muted mb-3">// gururaj.config</div>
-                <pre className="font-mono text-xs text-fg-secondary leading-relaxed whitespace-pre-wrap">
-{`const gururaj = {
-  location: "Bengaluru, India",
-  roles: [
-    "Filmmaker",
-    "Storyteller",
-    "Video Editor",
-    "Penetration Tester",
-    "Ethical Hacker"
-  ],
-  experience: "5 years",
-  currentFocus: [
-    "Brand Communications",
-    "Vulnerability Assessment",
-    "Ethical Hacking"
-  ],
-  education: "Master-Diploma in
-    Cyber Security (in progress)",
-  available: true
-};`}
-                </pre>
+            {/* Skills */}
+            <div data-reveal data-delay="300" style={{ marginTop: 36 }}>
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#FF3B3B', letterSpacing: '0.15em', marginRight: 12 }}>
+                  CREATIVE
+                </span>
+                <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                  {CREATIVE_TAGS.map(t => <SkillTag key={t} label={t} type="creative" />)}
+                </div>
+              </div>
+              <div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#00D9FF', letterSpacing: '0.15em', marginRight: 12 }}>
+                  SECURITY
+                </span>
+                <div style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+                  {SECURITY_TAGS.map(t => <SkillTag key={t} label={t} type="security" />)}
+                </div>
               </div>
             </div>
           </div>
-        </ScrollReveal>
 
-        {/* Two-Column Skills Grid */}
-        <ScrollReveal delay={200}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14">
-            {/* Creative Stack */}
-            <div className="solid-card p-7">
-              <div className="flex items-center gap-3 mb-5">
-                <span className="text-2xl">🎬</span>
-                <h3 className="text-lg font-bold text-fg">Creative Stack</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {creativeSkills.map((skill) => (
-                  <span key={skill} className="skill-tag-creative">{skill}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Security Stack */}
-            <div className="solid-card p-7">
-              <div className="flex items-center gap-3 mb-5">
-                <span className="text-2xl">🔓</span>
-                <h3 className="text-lg font-bold text-fg">Security Stack</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {securitySkills.map((skill) => (
-                  <span key={skill} className="skill-tag">{skill}</span>
-                ))}
-              </div>
-            </div>
+          {/* ── Right column: Avatar ── */}
+          <div data-reveal data-delay="200">
+            <AvatarCard />
           </div>
-        </ScrollReveal>
+        </div>
       </div>
     </section>
   );

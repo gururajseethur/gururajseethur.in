@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home', hash: null },
-  { to: '/', label: 'About', hash: 'about' },
-  { to: '/projects', label: 'Projects', hash: null },
-  { to: '/security', label: 'Security', hash: null },
-  { to: '/creative', label: 'Creative', hash: null },
-  { to: '/blog', label: 'Blog', hash: null },
+  { label: 'About',    to: '/',         hash: 'about'   },
+  { label: 'Projects', to: '/projects', hash: null       },
+  { label: 'Security', to: '/security', hash: null       },
+  { label: 'Creative', to: '/creative', hash: null       },
 ];
 
 export default function Navbar() {
@@ -17,10 +15,13 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
   const handleNavClick = useCallback((to, hash) => {
     setMobileOpen(false);
@@ -33,36 +34,52 @@ export default function Navbar() {
         setTimeout(() => {
           const el = document.getElementById(hash);
           if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        }, 120);
       }
     }
   }, [location.pathname, navigate]);
 
+  const headerStyle = {
+    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+    transition: 'background 300ms ease, border-color 300ms ease, backdrop-filter 300ms ease',
+    background: scrolled ? 'rgba(7,7,9,0.88)' : 'transparent',
+    backdropFilter: scrolled ? 'blur(20px)' : 'none',
+    borderBottom: scrolled ? '1px solid #1C1C24' : '1px solid transparent',
+  };
+
+  const linkBase = {
+    fontFamily: 'var(--font-sans)',
+    fontSize: 13,
+    fontWeight: 400,
+    textDecoration: 'none',
+    padding: '6px 2px',
+    position: 'relative',
+    transition: 'color 0.2s',
+  };
+
   return (
-    <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-base/90 backdrop-blur-xl border-b border-edge'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-content mx-auto px-5 md:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header style={headerStyle}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 max(32px, 4vw)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+
           {/* Logo */}
-          <NavLink to="/" className="group">
-            <span className="text-lg font-semibold text-fg tracking-tight">Gururaj</span>
-            <span className="text-lg font-semibold text-accent">.</span>
-          </NavLink>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
+              Gururaj<span style={{ color: '#FF3B3B' }}>.</span>
+            </span>
+          </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map(({ to, label, hash }) => {
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }} className="hidden md:flex">
+            {NAV_LINKS.map(({ label, to, hash }) => {
               if (hash) {
                 return (
                   <button
                     key={label}
                     onClick={() => handleNavClick(to, hash)}
-                    className="relative px-3 py-2 text-sm font-medium transition-colors duration-200 text-fg-secondary hover:text-fg"
+                    style={{ ...linkBase, background: 'none', border: 'none', color: '#50505A', cursor: 'none' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#50505A'}
                   >
                     {label}
                   </button>
@@ -70,22 +87,26 @@ export default function Navbar() {
               }
               return (
                 <NavLink
-                  key={to + label}
+                  key={label}
                   to={to}
-                  end={to === '/'}
-                  className={({ isActive }) =>
-                    `relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                      isActive
-                        ? 'text-fg'
-                        : 'text-fg-secondary hover:text-fg'
-                    }`
-                  }
+                  style={({ isActive }) => ({ ...linkBase, color: isActive ? '#FFFFFF' : '#50505A' })}
+                  onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
+                  onMouseLeave={e => {
+                    // only reset if not active
+                    if (!e.currentTarget.getAttribute('aria-current')) {
+                      e.currentTarget.style.color = '#50505A';
+                    }
+                  }}
                 >
                   {({ isActive }) => (
                     <>
                       {label}
                       {isActive && (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-accent" />
+                        <span style={{
+                          position: 'absolute', bottom: -2, left: '50%', transform: 'translateX(-50%)',
+                          width: 4, height: 4, borderRadius: '50%', background: '#00D9FF',
+                          display: 'block',
+                        }} />
                       )}
                     </>
                   )}
@@ -94,54 +115,65 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Hire Me CTA + Mobile hamburger */}
-          <div className="flex items-center gap-4">
-            <NavLink
+          {/* Hire Me + Hamburger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Link
               to="/contact"
-              className="hidden md:inline-flex text-xs py-2 px-4 border border-edge-strong rounded-lg text-fg font-semibold hover:bg-white hover:text-base hover:border-white transition-all duration-200"
+              className="hidden md:inline-flex"
+              style={{
+                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
+                textDecoration: 'none', letterSpacing: '0.08em',
+                padding: '7px 16px', borderRadius: 6,
+                border: '1px solid #1C1C24', color: '#FFFFFF',
+                transition: 'border-color 0.2s, background 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor='#FFFFFF'; e.currentTarget.style.background='rgba(255,255,255,0.05)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor='#1C1C24'; e.currentTarget.style.background='transparent'; }}
             >
-              Hire Me
-            </NavLink>
+              HIRE ME
+            </Link>
 
+            {/* Hamburger */}
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+              className="md:hidden"
+              onClick={() => setMobileOpen(o => !o)}
               aria-label="Toggle menu"
+              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'none', padding: 4, display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', justifyContent: 'center', width: 32, height: 32 }}
             >
-              <span
-                className={`block w-5 h-[1.5px] bg-fg transition-all duration-300 ${
-                  mobileOpen ? 'rotate-45 translate-y-[4.5px]' : ''
-                }`}
-              />
-              <span
-                className={`block w-5 h-[1.5px] bg-fg transition-all duration-300 ${
-                  mobileOpen ? 'opacity-0 scale-0' : ''
-                }`}
-              />
-              <span
-                className={`block w-5 h-[1.5px] bg-fg transition-all duration-300 ${
-                  mobileOpen ? '-rotate-45 -translate-y-[4.5px]' : ''
-                }`}
-              />
+              {[0,1,2].map(i => (
+                <span key={i} style={{
+                  display: 'block', width: 20, height: 1.5, background: '#FFFFFF',
+                  transition: 'transform 0.25s, opacity 0.25s',
+                  transform: mobileOpen
+                    ? i === 0 ? 'rotate(45deg) translate(4.5px, 4.5px)'
+                    : i === 1 ? 'scaleX(0)'
+                    : 'rotate(-45deg) translate(4.5px, -4.5px)'
+                    : 'none',
+                  opacity: mobileOpen && i === 1 ? 0 : 1,
+                }} />
+              ))}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ${
-          mobileOpen ? 'max-h-96 border-t border-edge' : 'max-h-0'
-        }`}
-      >
-        <nav className="flex flex-col px-5 py-4 gap-1 bg-base/95 backdrop-blur-xl">
-          {NAV_LINKS.map(({ to, label, hash }) => {
+      {/* Mobile dropdown */}
+      <div style={{
+        overflow: 'hidden',
+        maxHeight: mobileOpen ? 400 : 0,
+        transition: 'max-height 0.3s ease',
+        background: 'rgba(7,7,9,0.96)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: mobileOpen ? '1px solid #1C1C24' : '1px solid transparent',
+      }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', padding: '12px max(32px, 4vw) 20px', gap: 4 }}>
+          {NAV_LINKS.map(({ label, to, hash }) => {
             if (hash) {
               return (
                 <button
                   key={label}
                   onClick={() => handleNavClick(to, hash)}
-                  className="px-4 py-3 rounded-lg text-sm transition-colors duration-200 text-fg-secondary text-left hover:text-fg"
+                  style={{ background: 'none', border: 'none', color: '#B0B0C0', fontFamily: 'var(--font-sans)', fontSize: 15, textAlign: 'left', padding: '10px 0', cursor: 'none' }}
                 >
                   {label}
                 </button>
@@ -149,27 +181,24 @@ export default function Navbar() {
             }
             return (
               <NavLink
-                key={to + label}
+                key={label}
                 to={to}
-                end={to === '/'}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `px-4 py-3 rounded-lg text-sm transition-colors duration-200 ${
-                    isActive ? 'text-fg' : 'text-fg-secondary'
-                  }`
-                }
+                style={({ isActive }) => ({ color: isActive ? '#FFFFFF' : '#B0B0C0', fontFamily: 'var(--font-sans)', fontSize: 15, textDecoration: 'none', padding: '10px 0', display: 'block' })}
               >
                 {label}
               </NavLink>
             );
           })}
-          <NavLink
+          <Link
             to="/contact"
-            onClick={() => setMobileOpen(false)}
-            className="mx-4 mt-2 btn-primary text-xs py-2 px-4 justify-center border border-edge-strong"
+            style={{
+              marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
+              textDecoration: 'none', padding: '10px 18px', border: '1px solid #1C1C24',
+              borderRadius: 6, color: '#FFFFFF', display: 'inline-block', alignSelf: 'flex-start',
+            }}
           >
-            Hire Me
-          </NavLink>
+            HIRE ME
+          </Link>
         </nav>
       </div>
     </header>

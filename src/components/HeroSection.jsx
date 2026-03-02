@@ -1,114 +1,237 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
-import useTryHackMeStats from '../hooks/useTryHackMeStats';
+import React, { useState, useEffect, Suspense } from 'react';
+import { Link } from 'react-router-dom';
+import BinaryStarSystem from './three/BinaryStarSystem';
 
-/* ── Rotating typewriter for role titles ── */
-const ROLES = ['Filmmaker', 'Storyteller', 'Video Editor', 'Penetration Tester', 'Ethical Hacker'];
-const TYPE_SPEED = 80;
-const DELETE_SPEED = 40;
-const PAUSE_MS = 2000;
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
 
-function useTypewriter(words) {
-  const [display, setDisplay] = useState('');
-  const [wordIndex, setWordIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+const MARQUEE_ITEMS = [
+  { text: 'FILMMAKER',           color: '#FF3B3B' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'VIDEO EDITOR',        color: '#50505A' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'ETHICAL HACKER',      color: '#00D9FF' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'PENETRATION TESTER',  color: '#50505A' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'CEH CERTIFIED',        color: '#FF3B3B' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: '54+ THM ROOMS',        color: '#50505A' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'STORYTELLER',         color: '#00D9FF' },
+  { text: '·',                   color: '#1C1C24' },
+  { text: 'BRAND COMMUNICATIONS', color: '#50505A' },
+  { text: '·',                   color: '#1C1C24' },
+];
 
-  useEffect(() => {
-    const current = words[wordIndex];
-
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setDisplay(current.slice(0, display.length + 1));
-        if (display.length + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), PAUSE_MS);
-          return;
-        }
-      } else {
-        setDisplay(current.slice(0, display.length - 1));
-        if (display.length - 1 === 0) {
-          setIsDeleting(false);
-          setWordIndex((wordIndex + 1) % words.length);
-        }
-      }
-    }, isDeleting ? DELETE_SPEED : TYPE_SPEED);
-
-    return () => clearTimeout(timeout);
-  }, [display, isDeleting, wordIndex, words]);
-
-  return display;
-}
+const STATS = [
+  { num: '4+',   label: 'Years Experience' },
+  { num: '54+',  label: 'THM Rooms'        },
+  { num: 'CEH',  label: 'In Progress'      },
+  { num: '🏆',   label: 'EOTQ Apr–Jun 25'  },
+];
 
 export default function HeroSection() {
-  const heroRef = useRef(null);
-  const typedRole = useTypewriter(ROLES);
-  const { roomCount } = useTryHackMeStats();
-  const roomLabel = Number.isFinite(roomCount) ? `${roomCount}` : '70';
+  const [entered, setEntered] = useState(false);
 
-  const scrollTo = useCallback((id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  useEffect(() => {
+    const t = setTimeout(() => setEntered(true), 100);
+    return () => clearTimeout(t);
   }, []);
 
+  const delay = (ms) => ({ animationDelay: `${ms}ms`, animationFillMode: 'both' });
+
   return (
-    <section
-      id="hero"
-      ref={heroRef}
-      className="relative min-h-screen flex items-center overflow-hidden"
-    >
-      {/* Content */}
-      <div className="relative z-10 max-w-content mx-auto w-full px-5 md:px-8">
-        {/* Status badge */}
-        <div className="stagger-enter stagger-enter-0 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface border border-edge mb-10">
-          <span className="status-dot" />
-          <span className="font-mono text-xs text-fg-secondary">Open to opportunities</span>
+    <>
+      {/* ── HERO ──────────────────────────────────────────────── */}
+      <section
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          background: IS_MOBILE
+            ? 'radial-gradient(ellipse at 70% 20%, rgba(255,59,59,0.15) 0%, transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(0,217,255,0.1) 0%, transparent 50%), #070709'
+            : '#070709',
+        }}
+      >
+        {/* 3D Canvas */}
+        {!IS_MOBILE && (
+          <Suspense fallback={null}>
+            <BinaryStarSystem />
+          </Suspense>
+        )}
+
+        {/* Vignette */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 1,
+          background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(7,7,9,0.7) 100%)',
+          pointerEvents: 'none',
+        }} />
+
+
+        {/* ── Bottom-left hero text ── */}
+        <div style={{
+          position: 'absolute',
+          bottom: '12%',
+          left: 'max(48px, 5vw)',
+          zIndex: 10,
+          maxWidth: 680,
+        }}>
+          {/* Eyebrow */}
+          <p
+            className={entered ? 'hero-enter' : ''}
+            style={{
+              fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+              letterSpacing: '0.15em', textTransform: 'uppercase',
+              marginBottom: 24, ...delay(200),
+            }}
+          >
+            // BENGALURU, INDIA
+          </p>
+
+          {/* Headline */}
+          <h1
+            className={entered ? 'hero-enter' : ''}
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(52px, 12vw, 140px)',
+              fontWeight: 800,
+              lineHeight: 0.9,
+              letterSpacing: '-0.04em',
+              margin: 0,
+              ...delay(300),
+            }}
+          >
+            <span style={{ color: '#FF3B3B' }}>Film</span>
+            <span style={{ color: '#FFFFFF' }}>maker.</span>
+            <br />
+            <span style={{ color: '#FFFFFF' }}>Ethical</span>
+            <br />
+            <span style={{ color: '#00D9FF' }}>Hacker.</span>
+          </h1>
+
+          {/* Split descriptor */}
+          <div
+            className={entered ? 'hero-enter' : ''}
+            style={{
+              display: 'flex', alignItems: 'center', marginTop: 28,
+              ...delay(450),
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#FF3B3B' }}>
+              🎬 Video Editor · Filmmaker · Storyteller
+            </span>
+            <div style={{ width: 1, height: 16, background: '#1C1C24', margin: '0 20px' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00D9FF' }}>
+              🔐 CEH · Pentester · 54+ THM Rooms
+            </span>
+          </div>
+
+          {/* CTAs */}
+          <div
+            className={entered ? 'hero-enter' : ''}
+            style={{ display: 'flex', gap: 12, marginTop: 40, ...delay(550) }}
+          >
+            <button
+              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              style={{
+                background: '#FFFFFF', color: '#070709',
+                fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 14,
+                padding: '12px 32px', borderRadius: 6, border: 'none',
+                transition: 'transform 0.15s ease, background 0.15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform='scale(0.97)'; e.currentTarget.style.background='#E0E0E0'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform='scale(1)'; e.currentTarget.style.background='#FFFFFF'; }}
+            >
+              Explore Work
+            </button>
+            <Link
+              to="/contact"
+              style={{
+                border: '1px solid rgba(255,255,255,0.3)', color: '#FFFFFF',
+                fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 14,
+                padding: '12px 32px', borderRadius: 6, textDecoration: 'none',
+                transition: 'background 0.2s',
+                display: 'inline-flex', alignItems: 'center',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}
+              onMouseLeave={e => e.currentTarget.style.background='transparent'}
+            >
+              Get In Touch
+            </Link>
+          </div>
+
+          {/* Stats */}
+          <div
+            className={entered ? 'hero-enter' : ''}
+            style={{
+              display: 'flex', gap: 32, marginTop: 48, alignItems: 'center',
+              ...delay(650),
+            }}
+          >
+            {STATS.map((s, i) => (
+              <React.Fragment key={s.label}>
+                {i > 0 && <div style={{ width: 1, height: 32, background: '#1C1C24' }} />}
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(28px,4vw,40px)', color: '#FFFFFF', lineHeight: 1 }}>
+                    {s.num}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#555', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 4 }}>
+                    {s.label}
+                  </div>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
-        {/* Headline */}
-        <h1 className="stagger-enter stagger-enter-1 text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight mb-4 text-fg">
-          Security-minded filmmaker{'\u00A0'}
-          <br className="hidden sm:block" />
-          and ethical hacker.
-        </h1>
-
-        {/* Rotating role subtitle */}
-        <div className="stagger-enter stagger-enter-2 flex items-center gap-1 mb-8">
-          <span className="font-mono text-sm md:text-base text-accent">{typedRole}</span>
-          <span className="typewriter-cursor" />
+        {/* ── Scroll indicator ── */}
+        <div
+          className={entered ? 'hero-enter' : ''}
+          style={{
+            position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)',
+            zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+            ...delay(800),
+          }}
+        >
+          {/* SVG mouse */}
+          <svg width="20" height="30" viewBox="0 0 20 30" fill="none">
+            <rect x="1" y="1" width="18" height="28" rx="9" stroke="#333" strokeWidth="1.5" />
+            <rect className="scroll-mouse-dot" x="9" y="6" width="2" height="6" rx="1" fill="#555" />
+          </svg>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#333', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            SCROLL TO EXPLORE
+          </span>
         </div>
+      </section>
 
-        {/* Descriptor */}
-        <p className="stagger-enter stagger-enter-3 text-fg-secondary text-base max-w-xl leading-relaxed mb-10">
-          Branding &amp; communications lead at CreditAccess Grameen.
-          CEH certified. {roomLabel} TryHackMe rooms completed. Building secure systems
-          and compelling narratives from Bengaluru.
-        </p>
-
-        {/* CTA */}
-        <div className="stagger-enter stagger-enter-4 flex flex-wrap items-center gap-4">
-          <button
-            onClick={() => scrollTo('experience')}
-            className="btn-primary"
-          >
-            View Work
-          </button>
-          <a
-            href="/Gururaj_Seethur_Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Resume
-          </a>
-          <button
-            onClick={() => scrollTo('contact')}
-            className="text-fg-secondary hover:text-fg text-sm font-medium transition-colors"
-          >
-            Get in touch →
-          </button>
+      {/* ── MARQUEE STRIP ─────────────────────────────────────── */}
+      <div style={{
+        background: '#0E0E12',
+        borderTop: '1px solid #1C1C24',
+        borderBottom: '1px solid #1C1C24',
+        padding: '14px 0',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+      }}>
+        <div className="marquee-track">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span
+              key={i}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: item.color,
+                marginRight: 24,
+              }}
+            >
+              {item.text}
+            </span>
+          ))}
         </div>
       </div>
-    </section>
+    </>
   );
 }

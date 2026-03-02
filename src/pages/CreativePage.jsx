@@ -1,83 +1,156 @@
-import React from 'react';
-import ScrollReveal from '../components/ScrollReveal';
+import React, { useState } from 'react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
-const creativeWork = [
+const CREATIVE_WORK = [
   {
     title: 'Professional Video Editing',
-    description:
-      'Years of client-facing video production — storytelling through cuts, pacing, color grading, and sound design. Corporate, creative, and technical content across multiple industries.',
     type: 'Primary Craft',
+    description: 'Client-facing production — storytelling through cuts, pacing, colour grading, and sound design. 200+ videos delivered.',
     tools: ['Premiere Pro', 'DaVinci Resolve', 'After Effects'],
     icon: '🎬',
   },
   {
     title: 'Motion Design',
-    description:
-      'Title sequences, lower thirds, animated graphics, and transitions. Clean motion design that serves the narrative — functional, not decorative.',
     type: 'Motion',
+    description: 'Title sequences, lower thirds, animated graphics. Clean motion that serves the narrative.',
     tools: ['After Effects', 'Premiere Pro', 'Photoshop'],
     icon: '✨',
   },
   {
-    title: 'Branding & Communication Systems',
-    description:
-      'Visual identity development, typography standards, and structured communication design. The same systematic thinking that applies to infrastructure — applied to brand.',
+    title: 'Branding & Comm Systems',
     type: 'Branding',
+    description: 'Visual identity, typography standards, structured communication design. Systematic thinking applied to brand.',
     tools: ['Figma', 'Illustrator', 'Design Tokens'],
     icon: '🎯',
   },
   {
-    title: 'Audio Engineering & Sound Design',
-    description:
-      'Dialogue cleanup, mixing, foley integration, and soundtrack selection. Every project gets a proper audio pass — because great visuals with bad audio still feels broken.',
+    title: 'Audio Engineering',
     type: 'Audio',
+    description: 'Dialogue cleanup, mixing, foley integration. Great visuals with bad audio still feels broken.',
     tools: ['Audition', 'Premiere Pro', 'DaVinci Resolve'],
     icon: '🎧',
   },
+  {
+    title: 'Corporate Storytelling',
+    type: 'Filmmaking',
+    description: 'Annual reports, brand films, internal communications — turning dry briefs into watchable content.',
+    tools: ['Premiere Pro', 'DaVinci Resolve', 'Figma'],
+    icon: '📽️',
+  },
+  {
+    title: 'Social & Digital Content',
+    type: 'Digital',
+    description: 'Short-form video, reels, campaign cut-downs. Optimised for engagement without killing the craft.',
+    tools: ['Premiere Pro', 'After Effects', 'CapCut'],
+    icon: '📱',
+  },
 ];
 
-export default function CreativePage() {
+function CreativeCard({ item, index }) {
+  const [hov, setHov] = useState(false);
   return (
-    <div className="page-panel px-5 md:px-8 pt-24 md:pt-28 py-16 md:py-24">
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      data-reveal
+      data-delay={`${(index % 3) * 100}`}
+      style={{
+        background: '#0E0E12',
+        border: `1px solid ${hov ? '#FF3B3B' : '#1C1C24'}`,
+        borderRadius: 16, padding: 32,
+        transform: hov ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'all 0.25s ease',
+        boxShadow: hov ? '0 0 24px rgba(255,59,59,0.1)' : 'none',
+        display: 'flex', flexDirection: 'column', gap: 12,
+      }}
+    >
+      <div style={{ fontSize: 28 }}>{item.icon}</div>
+      <div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#FF3B3B', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          {item.type}
+        </span>
+        <h3 style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 20, color: '#FFFFFF', margin: '8px 0 0' }}>
+          {item.title}
+        </h3>
+      </div>
+      <p style={{ fontSize: 15, color: '#666', lineHeight: 1.7, margin: 0, flex: 1 }}>
+        {item.description}
+      </p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {item.tools.map(t => (
+          <span key={t} style={{
+            fontFamily: 'var(--font-mono)', fontSize: 11,
+            border: `1px solid ${hov ? 'rgba(255,59,59,0.4)' : '#1C1C24'}`,
+            color: hov ? '#FF3B3B' : '#50505A',
+            padding: '3px 8px', borderRadius: 4,
+            transition: 'all 0.15s ease',
+            boxShadow: hov ? '0 0 8px rgba(255,59,59,0.15)' : 'none',
+          }}>
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function CreativePage() {
+  const sectionRef = useScrollReveal();
+
+  return (
+    <div
+      ref={sectionRef}
+      style={{
+        minHeight: '100vh',
+        padding: '120px max(48px, 5vw)',
+        background: 'radial-gradient(ellipse 100% 60% at 50% 0%, rgba(255,59,59,0.04) 0%, transparent 60%)',
+      }}
+    >
       <div className="max-w-content mx-auto">
-        <ScrollReveal>
-          <div className="section-label">Creative</div>
-          <div className="accent-line mb-6" />
-          <h1 className="text-3xl md:text-4xl font-bold text-fg mb-3 tracking-tight">
-            Creative Work
+
+        {/* Header */}
+        <div style={{ marginBottom: 64 }}>
+          <div data-reveal style={{
+            display: 'inline-block',
+            fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+            border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+            marginBottom: 24,
+          }}>
+            // CREATIVE
+          </div>
+          <h1 data-reveal data-delay="100" style={{
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            fontSize: 'clamp(40px,6vw,64px)', color: '#FFFFFF',
+            letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 16px',
+          }}>
+            Creative Work.
           </h1>
-          <p className="text-sm text-fg-secondary mb-16 max-w-lg leading-relaxed">
-            Video production is where I started. The creative discipline carries over into everything I architect.
+          <p data-reveal data-delay="200" style={{ fontSize: 16, color: '#666', maxWidth: 480, lineHeight: 1.6 }}>
+            Filmmaker since 2021. Every frame is a decision. Every cut is a choice.
           </p>
-        </ScrollReveal>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {creativeWork.map((work, i) => (
-            <ScrollReveal key={work.title} delay={i * 100}>
-              <div className="solid-card p-7 h-full group">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-3xl">{work.icon}</span>
-                  <span className="font-mono text-xs text-fg-muted uppercase tracking-widest font-medium px-3 py-1 rounded-full bg-surface border border-edge">
-                    {work.type}
-                  </span>
-                </div>
+        {/* Film strip decoration */}
+        <div data-reveal className="film-strip" style={{ marginBottom: 48, borderRadius: 4 }} />
 
-                <h2 className="text-lg md:text-xl font-semibold text-fg mb-3 group-hover:text-danger transition-colors duration-300">
-                  {work.title}
-                </h2>
+        {/* Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {CREATIVE_WORK.map((item, i) => <CreativeCard key={item.title} item={item} index={i} />)}
+        </div>
 
-                <p className="text-sm text-fg-secondary leading-relaxed mb-6">
-                  {work.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  {work.tools.map((t) => (
-                    <span key={t} className="skill-tag-creative">{t}</span>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
-          ))}
+        {/* Award callout */}
+        <div data-reveal style={{
+          marginTop: 64, padding: '32px 40px',
+          background: 'rgba(255,59,59,0.04)',
+          border: '1px solid rgba(255,59,59,0.15)',
+          borderRadius: 16, textAlign: 'center',
+        }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: '#FF3B3B', margin: 0 }}>
+            🏆 Employee of the Quarter · Apr–Jun 2025 · CreditAccess Grameen
+          </p>
+          <p style={{ fontSize: 15, color: '#666', marginTop: 8 }}>
+            Recognised for creative excellence and end-to-end video production ownership.
+          </p>
         </div>
       </div>
     </div>

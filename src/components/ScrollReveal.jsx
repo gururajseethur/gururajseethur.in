@@ -26,7 +26,7 @@ export default function ScrollReveal({ children, className = '', delay = 0 }) {
   return (
     <div
       ref={ref}
-      className={`${className} transition-all duration-500 ${
+      className={`${className} transition-all duration-[600ms] ${
         isVisible
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-6'

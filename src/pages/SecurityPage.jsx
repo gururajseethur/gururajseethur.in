@@ -1,146 +1,347 @@
-import React from 'react';
-import ScrollReveal from '../components/ScrollReveal';
-import useIntersectionObserver from '../hooks/useIntersectionObserver';
+import React, { useState, useEffect, useCallback } from 'react';
 import useTryHackMeStats from '../hooks/useTryHackMeStats';
+import useScrollReveal from '../hooks/useScrollReveal';
 
-/* ── Three phases of attack ── */
-const phases = [
-  {
-    number: 1,
-    name: 'Recon',
-    tools: ['Nmap', 'Gobuster', 'Nikto', 'Wireshark'],
-  },
-  {
-    number: 2,
-    name: 'Exploitation',
-    tools: ['Metasploit', 'Burp Suite', 'Hydra', 'John the Ripper'],
-  },
-  {
-    number: 3,
-    name: 'Post-Exploitation',
-    tools: ['Privilege Escalation', 'Docker escape', 'Persistence techniques', 'Python automation'],
-  },
+const BOOT_LINES = [
+  '[    0.000] Initializing security module...',
+  '[    0.183] Loading kernel: 5.15.0-kali3-amd64',
+  '[    0.441] Starting network interfaces...',
+  '[    0.892] Mounting encrypted volumes...',
+  '[    1.204] Loading TryHackMe profile: Gururajseethur',
+  '[    1.587] Verifying CEH certification... OK',
+  '[    1.891] 54+ rooms completed. Scanning active...',
+  '[    2.203] ',
+  '[    2.203] ██████████████████████ 100%',
+  '[    2.501] ACCESS GRANTED',
+  '[    2.501] ',
+  '[    2.800] Welcome back, Gururaj.',
 ];
 
-const labHighlights = [
-  { name: 'Mr Robot', type: 'CTF' },
-  { name: 'RootMe', type: 'CTF' },
-  { name: 'Boiler CTF', type: 'CTF' },
-  { name: 'Vulnversity', type: 'Web' },
-  { name: 'Basic Pentesting', type: 'Lab' },
-  { name: 'Kenobi', type: 'Lab' },
-  { name: 'Blue', type: 'Lab' },
-  { name: 'Ice', type: 'Lab' },
-];
+function BootOverlay({ onDone }) {
+  const [lines, setLines] = useState([]);
+  const [fading, setFading] = useState(false);
 
-/* ── Terminal-style tags that appear one-by-one ── */
-function TerminalTags({ tools }) {
-  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.2 });
+  useEffect(() => {
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i < BOOT_LINES.length) {
+        setLines(prev => [...prev, BOOT_LINES[i]]);
+        i++;
+      } else {
+        clearInterval(iv);
+        setTimeout(() => {
+          setFading(true);
+          setTimeout(onDone, 500);
+        }, 600);
+      }
+    }, 150);
+    return () => clearInterval(iv);
+  }, [onDone]);
 
   return (
-    <div ref={ref} className="flex flex-wrap gap-2">
-      {tools.map((tool, i) => (
-        <span
-          key={tool}
-          className={`terminal-tag ${isVisible ? 'visible' : ''} text-xs px-3.5 py-1.5 rounded-full bg-accent/[0.08] border border-accent/[0.15] text-accent font-mono`}
-          style={{ transitionDelay: isVisible ? `${i * 50}ms` : '0ms' }}
-        >
-          {tool}
-        </span>
-      ))}
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: '#020204',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      opacity: fading ? 0 : 1,
+      transition: 'opacity 0.5s ease',
+      pointerEvents: fading ? 'none' : 'all',
+    }}>
+      <div style={{ maxWidth: 600, width: '100%', padding: '0 32px' }}>
+        {lines.map((line, i) => (
+          <div key={i} style={{
+            fontFamily: 'var(--font-mono)', fontSize: 14, lineHeight: 1.8,
+            color: line.includes('ACCESS GRANTED') || line.includes('Welcome') ? '#FFFFFF'
+              : line.includes('100%') ? '#FF3B3B' : '#00D9FF',
+            animation: 'boot-line 0.3s ease both',
+          }}>
+            {line || '\u00A0'}
+          </div>
+        ))}
+        {!fading && lines.length < BOOT_LINES.length && (
+          <span style={{
+            display: 'inline-block', width: 8, height: 14,
+            background: '#00D9FF', verticalAlign: 'text-bottom',
+            animation: 'blink 1s step-start infinite',
+          }} />
+        )}
+      </div>
     </div>
   );
 }
 
-/* ── CTF rows ── */
-function CTFTable({ labs }) {
-  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.15 });
+const SKILLS_PHASES = [
+  {
+    num: '01', name: 'Reconnaissance',
+    tags: ['Nmap','Shodan','TheHarvester','OSINT','Maltego'],
+  },
+  {
+    num: '02', name: 'Exploitation',
+    tags: ['Metasploit','Burp Suite','SQLMap','XSS','OWASP Top10'],
+  },
+  {
+    num: '03', name: 'Post-Exploitation',
+    tags: ['Privilege Escalation','Mimikatz','BloodHound','Persistence'],
+  },
+  {
+    num: '04', name: 'Scripting & Tooling',
+    tags: ['Python','Bash','PowerShell','Docker','Git'],
+  },
+];
 
+const CTF_ROOMS = [
+  { name: 'Jr Penetration Tester', type: 'Path',   diff: 'Medium' },
+  { name: 'Pre-Security',          type: 'Path',   diff: 'Easy'   },
+  { name: 'OWASP Top 10',          type: 'Room',   diff: 'Easy'   },
+  { name: 'Nmap',                  type: 'Room',   diff: 'Easy'   },
+  { name: 'Metasploit',            type: 'Room',   diff: 'Medium' },
+  { name: 'Burp Suite: Basics',    type: 'Module', diff: 'Easy'   },
+  { name: 'Linux PrivEsc',         type: 'Room',   diff: 'Medium' },
+  { name: 'Win PrivEsc',           type: 'Room',   diff: 'Hard'   },
+  { name: 'Active Directory Basics', type: 'Room', diff: 'Medium' },
+  { name: 'Intro to Web Hacking',  type: 'Module', diff: 'Easy'   },
+];
+
+const TYPE_STYLES = {
+  Path:   { bg: 'rgba(0,217,255,0.1)',   border: '#00D9FF', color: '#00D9FF' },
+  Room:   { bg: 'rgba(255,59,59,0.1)',   border: '#FF3B3B', color: '#FF3B3B' },
+  Module: { bg: 'rgba(34,197,94,0.1)',   border: '#22C55E', color: '#22C55E' },
+};
+
+const DIFF_COLORS = { Easy: '#22C55E', Medium: '#FFB800', Hard: '#FF3B3B' };
+
+
+
+function SkillTag({ label }) {
+  const [hov, setHov] = useState(false);
   return (
-    <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {labs.map((lab, i) => (
-        <div
-          key={lab.name}
-          className={`ctf-row flex items-center justify-between p-3 rounded-lg bg-surface border border-edge-subtle`}
-          style={{
-            animationDelay: isVisible ? `${i * 100}ms` : '0ms',
-            animationPlayState: isVisible ? 'running' : 'paused',
-          }}
-        >
-          <span className="font-mono text-sm text-fg-secondary">{lab.name}</span>
-          <span className="font-mono text-micro text-fg-muted uppercase tracking-wider">{lab.type}</span>
-        </div>
-      ))}
-    </div>
+    <span
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontFamily: 'var(--font-mono)', fontSize: 12,
+        border: `1px solid ${hov ? '#00D9FF' : '#1C1C24'}`,
+        color: hov ? '#00D9FF' : '#888',
+        background: hov ? 'rgba(0,217,255,0.05)' : 'transparent',
+        boxShadow: hov ? '0 0 8px rgba(0,217,255,0.2)' : 'none',
+        padding: '4px 10px', borderRadius: 4,
+        transition: 'all 0.15s ease',
+        display: 'inline-block',
+      }}
+    >
+      {label}
+    </span>
   );
 }
 
 export default function SecurityPage() {
-  const { roomCount } = useTryHackMeStats();
-  const roomLabel = Number.isFinite(roomCount) ? `${roomCount}` : '70';
+  // Read sessionStorage synchronously during init — avoids the blank-page flicker
+  const [booted, setBooted] = useState(() =>
+    typeof window !== 'undefined' && !!sessionStorage.getItem('securityBooted')
+  );
+  const [hoverRow, setHoverRow] = useState(null);
+  const { roomCount, loading } = useTryHackMeStats();
+  const sectionRef = useScrollReveal();
+
+  const handleDone = useCallback(() => {
+    sessionStorage.setItem('securityBooted', '1');
+    setBooted(true);
+  }, []);
 
   return (
-    <div className="page-panel px-5 md:px-8 pt-24 md:pt-28 py-16 md:py-24">
-      <div className="max-w-content mx-auto">
-        <ScrollReveal>
-          <div className="section-label">Security</div>
-          <div className="accent-line mb-6" />
-          <h1 className="text-3xl md:text-4xl font-bold text-fg mb-3 tracking-tight">
-            Security &amp; Skills
-          </h1>
-          <p className="text-sm text-fg-secondary mb-12 max-w-lg leading-relaxed">
-            {roomLabel} TryHackMe rooms. Real labs. Real tools. Tracked progression — not gamified badges.
-          </p>
-        </ScrollReveal>
+    <>
+      {!booted && <BootOverlay onDone={handleDone} />}
 
-        {/* ── TryHackMe Badge Embed ── */}
-        <ScrollReveal delay={80}>
-          <div className="flex justify-center mb-16">
-            <div className="solid-card p-6 text-center border-accent/20">
-              <p className="font-mono text-xs text-accent uppercase tracking-widest mb-4 font-semibold">
-                TryHackMe Profile
+      <div
+        ref={sectionRef}
+        className="scanlines"
+        style={{
+          minHeight: '100vh',
+          padding: '120px max(48px, 5vw)',
+          opacity: booted ? 1 : 0,
+          transition: 'opacity 0.4s ease 0.1s',
+        }}
+      >
+        <div className="max-w-content mx-auto">
+
+          {/* Header */}
+          <div style={{ marginBottom: 80 }}>
+            <div data-reveal style={{
+              display: 'inline-block',
+              fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+              border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+              marginBottom: 24,
+            }}>
+              // SECURITY
+            </div>
+            <h1 data-reveal data-delay="100" style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: 'clamp(40px,6vw,64px)', color: '#FFFFFF',
+              letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 16px',
+            }}>
+              Ethical Hacker<br />
+              <span style={{ color: '#00D9FF' }}>in progress.</span>
+            </h1>
+            <p data-reveal data-delay="200" style={{ fontSize: 16, color: '#666', maxWidth: 480, lineHeight: 1.6 }}>
+              Pivoting from filmmaker to penetration tester. OSCP is the target.
+            </p>
+          </div>
+
+          {/* TryHackMe card */}
+          <div data-reveal style={{
+            background: 'rgba(0,217,255,0.03)',
+            border: '1px solid rgba(0,217,255,0.2)',
+            borderRadius: 16, padding: 40, marginBottom: 64,
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'center',
+          }}>
+            <div>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', letterSpacing: '0.1em', marginBottom: 8 }}>
+                // VERIFIED PROFILE
               </p>
-              <iframe
-                src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=3003430"
-                style={{ border: 'none', width: '100%', maxWidth: '480px', height: '120px' }}
-                title="TryHackMe Badge"
-              />
+              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: '#FFFFFF', margin: '0 0 8px' }}>
+                TryHackMe
+              </h2>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: '#00D9FF', marginBottom: 20 }}>
+                54+ rooms · OSCP trajectory · CEH Certified
+              </p>
+              <div style={{ display: 'flex', gap: 12 }}>
+                {[
+                  { label: `${loading ? '54+' : roomCount} Rooms` },
+                  { label: 'CEH ✓' },
+                ].map(s => (
+                  <span key={s.label} style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 12,
+                    background: 'rgba(0,217,255,0.1)',
+                    border: '1px solid #00D9FF', color: '#00D9FF',
+                    padding: '4px 14px', borderRadius: 99,
+                  }}>
+                    {s.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#50505A', letterSpacing: '0.1em' }}>
+                // PROFILE
+              </div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: '#FFFFFF' }}>
+                @Gururajseethur
+              </div>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {[
+                  { label: 'Jr Pen Tester Path', color: '#00D9FF' },
+                  { label: 'Pre-Security Path', color: '#00D9FF' },
+                  { label: 'CEH ✓', color: '#FF3B3B' },
+                ].map(b => (
+                  <span key={b.label} style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.06em',
+                    border: `1px solid ${b.color}`, color: b.color,
+                    background: `${b.color}18`, padding: '4px 12px', borderRadius: 4,
+                  }}>{b.label}</span>
+                ))}
+              </div>
+              <a
+                href="https://tryhackme.com/p/Gururajseethur"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.1em',
+                  color: '#00D9FF', textDecoration: 'none',
+                  border: '1px solid rgba(0,217,255,0.3)', padding: '8px 18px', borderRadius: 6,
+                  transition: 'background 0.2s, border-color 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(0,217,255,0.08)'; e.currentTarget.style.borderColor='#00D9FF'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='rgba(0,217,255,0.3)'; }}
+              >
+                VIEW PROFILE →
+              </a>
             </div>
           </div>
-        </ScrollReveal>
 
-        {/* ── Three Phases of Attack ── */}
-        <div className="space-y-4 mb-16">
-          {phases.map((phase) => (
-            <ScrollReveal key={phase.number} delay={phase.number * 80}>
-              <div className="solid-card p-7 md:p-9">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold bg-accent/[0.08] border border-accent/[0.15] text-accent">
-                    {phase.number}
+          {/* Skills phases */}
+          <div data-reveal style={{ marginBottom: 64 }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, color: '#FFFFFF', marginBottom: 32 }}>
+              Attack Phases
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+              {SKILLS_PHASES.map((phase, i) => (
+                <div
+                  key={phase.num}
+                  data-reveal
+                  data-delay={`${i * 100}`}
+                  style={{ background: '#0E0E12', border: '1px solid #1C1C24', borderRadius: 12, padding: 24 }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    <span style={{
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                      background: '#00D9FF', color: '#070709',
+                      padding: '2px 8px', borderRadius: 4,
+                    }}>
+                      {phase.num}
+                    </span>
+                    <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 18, color: '#FFFFFF' }}>
+                      {phase.name}
+                    </span>
                   </div>
-                  <div>
-                    <span className="font-mono text-micro uppercase tracking-widest text-fg-muted">Phase {phase.number}</span>
-                    <h2 className="text-xl md:text-2xl font-semibold text-fg">{phase.name}</h2>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {phase.tags.map(t => <SkillTag key={t} label={t} />)}
                   </div>
                 </div>
-                <TerminalTags tools={phase.tools} />
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-
-        {/* ── CTF & Lab Highlights ── */}
-        <ScrollReveal delay={360}>
-          <div className="solid-card p-7 md:p-9">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl">🏴</span>
-              <h2 className="text-xl md:text-2xl font-semibold text-fg">CTF &amp; Lab Highlights</h2>
-              <span className="font-mono text-xs text-fg-muted ml-auto">{roomLabel} rooms total</span>
+              ))}
             </div>
-            <CTFTable labs={labHighlights} />
           </div>
-        </ScrollReveal>
+
+          {/* CTF Table */}
+          <div data-reveal>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, color: '#FFFFFF', marginBottom: 24 }}>
+              Completed Rooms
+            </h2>
+
+            {/* Header */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: '20px 1fr 90px 70px',
+              gap: '0 16px', padding: '8px 12px', marginBottom: 4,
+            }}>
+              {['', 'ROOM', 'TYPE', 'DIFF'].map(h => (
+                <span key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</span>
+              ))}
+            </div>
+            <div style={{ height: 1, background: '#1C1C24', marginBottom: 4 }} />
+
+            {CTF_ROOMS.map((room, i) => {
+              const ts = TYPE_STYLES[room.type] || TYPE_STYLES.Room;
+              return (
+                <div
+                  key={room.name}
+                  onMouseEnter={() => setHoverRow(i)}
+                  onMouseLeave={() => setHoverRow(null)}
+                  style={{
+                    display: 'grid', gridTemplateColumns: '20px 1fr 90px 70px',
+                    gap: '0 16px', padding: '12px 12px',
+                    background: hoverRow === i ? 'rgba(0,217,255,0.03)' : 'transparent',
+                    borderRadius: 6, transition: 'background 0.2s ease',
+                  }}
+                >
+                  <span style={{ color: '#00D9FF', fontSize: 10, alignSelf: 'center' }}>▶</span>
+                  <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 16, color: '#FFFFFF' }}>
+                    {room.name}
+                  </span>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 11,
+                    background: ts.bg, border: `1px solid ${ts.border}`, color: ts.color,
+                    padding: '2px 8px', borderRadius: 4, alignSelf: 'center', display: 'inline-block',
+                  }}>
+                    {room.type}
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: DIFF_COLORS[room.diff], alignSelf: 'center' }}>
+                    {room.diff}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
