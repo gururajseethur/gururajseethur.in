@@ -18,26 +18,35 @@ const BOOT_LINES = [
   '[    2.800] Welcome back, Gururaj.',
 ];
 
+function lineColor(line) {
+  if (!line || typeof line !== 'string') return '#00D9FF';
+  if (line.includes('ACCESS GRANTED') || line.includes('Welcome')) return '#FFFFFF';
+  if (line.includes('100%')) return '#FF3B3B';
+  return '#00D9FF';
+}
+
 function BootOverlay({ onDone }) {
-  const [lines, setLines] = useState([]);
+  const [count, setCount] = useState(0);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    let i = 0;
     const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setLines(prev => [...prev, BOOT_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(iv);
-        setTimeout(() => {
-          setFading(true);
-          setTimeout(onDone, 500);
-        }, 600);
-      }
+      setCount(prev => {
+        const next = prev + 1;
+        if (next >= BOOT_LINES.length) {
+          clearInterval(iv);
+          setTimeout(() => {
+            setFading(true);
+            setTimeout(onDone, 500);
+          }, 600);
+        }
+        return next;
+      });
     }, 150);
     return () => clearInterval(iv);
   }, [onDone]);
+
+  const visibleLines = BOOT_LINES.slice(0, count);
 
   return (
     <div style={{
@@ -49,18 +58,17 @@ function BootOverlay({ onDone }) {
       pointerEvents: fading ? 'none' : 'all',
     }}>
       <div style={{ maxWidth: 600, width: '100%', padding: '0 max(24px, 5vw)' }}>
-        {lines.map((line, idx) => (
+        {visibleLines.map((line, idx) => (
           <div key={idx} style={{
             fontFamily: 'var(--font-mono)',
             fontSize: IS_MOBILE ? 12 : 14,
             lineHeight: 1.8,
-            color: line.includes('ACCESS GRANTED') || line.includes('Welcome') ? '#FFFFFF'
-              : line.includes('100%') ? '#FF3B3B' : '#00D9FF',
+            color: lineColor(line),
           }}>
             {line || '\u00A0'}
           </div>
         ))}
-        {!fading && lines.length < BOOT_LINES.length && (
+        {!fading && count < BOOT_LINES.length && (
           <span style={{
             display: 'inline-block', width: 8, height: IS_MOBILE ? 12 : 14,
             background: '#00D9FF', verticalAlign: 'text-bottom',
