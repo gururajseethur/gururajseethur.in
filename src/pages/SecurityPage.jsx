@@ -72,14 +72,6 @@ function BootOverlay({ onDone }) {
   );
 }
 
-/* helper: staggered fade-in after boot */
-function fadeIn(booted, delayMs = 0) {
-  return {
-    opacity: booted ? 1 : 0,
-    transform: booted ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.55s ease ${delayMs}ms, transform 0.55s ease ${delayMs}ms`,
-  };
-}
 
 const SKILLS_PHASES = [
   { num: '01', name: 'Reconnaissance',     tags: ['Nmap','Shodan','TheHarvester','OSINT','Maltego'] },
@@ -155,7 +147,7 @@ export default function SecurityPage() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
 
           {/* ── Header ── */}
-          <div style={{ marginBottom: IS_MOBILE ? 48 : 80, ...fadeIn(booted, 0) }}>
+          <div style={{ marginBottom: IS_MOBILE ? 48 : 80 }}>
             <div style={{
               display: 'inline-block',
               fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
@@ -188,7 +180,6 @@ export default function SecurityPage() {
             gridTemplateColumns: IS_MOBILE ? '1fr' : '1fr 1fr',
             gap: IS_MOBILE ? 28 : 32,
             alignItems: 'center',
-            ...fadeIn(booted, 120),
           }}>
             <div>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', letterSpacing: '0.1em', marginBottom: 8 }}>
@@ -252,7 +243,7 @@ export default function SecurityPage() {
           </div>
 
           {/* ── Attack Phases ── */}
-          <div style={{ marginBottom: IS_MOBILE ? 40 : 64, ...fadeIn(booted, 240) }}>
+          <div style={{ marginBottom: IS_MOBILE ? 40 : 64 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 20 : 32 }}>
               Attack Phases
             </h2>
@@ -282,7 +273,7 @@ export default function SecurityPage() {
           </div>
 
           {/* ── CTF Table ── */}
-          <div style={{ ...fadeIn(booted, 360) }}>
+          <div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 16 : 24 }}>
               Completed Rooms
             </h2>
