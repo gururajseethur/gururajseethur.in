@@ -9,13 +9,14 @@
 const allContent = import.meta.glob('/content/**/*.md', { eager: true });
 
 /**
- * @param {'projects' | 'blog' | 'videos'} collection — content subfolder
- * @returns {{ slug: string, attributes: object, body: string }[]}
+ * Pure function to process a content map. Exported for testing.
+ * @param {Record<string, any>} contentMap
+ * @param {string} collection
  */
-export function useContent(collection) {
+export function processContent(contentMap, collection) {
   const prefix = `/content/${collection}/`;
 
-  const items = Object.entries(allContent)
+  const items = Object.entries(contentMap)
     .filter(([path]) => path.startsWith(prefix))
     .map(([path, mod]) => {
       const slug = path
@@ -35,6 +36,14 @@ export function useContent(collection) {
     });
 
   return items;
+}
+
+/**
+ * @param {'projects' | 'blog' | 'videos'} collection — content subfolder
+ * @returns {{ slug: string, attributes: object, body: string }[]}
+ */
+export function useContent(collection) {
+  return processContent(allContent, collection);
 }
 
 /**
