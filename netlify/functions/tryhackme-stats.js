@@ -11,7 +11,7 @@ export const handler = async () => {
         statusCode: 502,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+
         },
         body: JSON.stringify({ error: 'TryHackMe upstream failed' }),
       };
@@ -25,7 +25,7 @@ export const handler = async () => {
         statusCode: 502,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+
         },
         body: JSON.stringify({ error: 'Invalid room count from TryHackMe' }),
       };
@@ -35,7 +35,7 @@ export const handler = async () => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+
         'Cache-Control': 'public, max-age=300',
       },
       body: JSON.stringify({
@@ -49,7 +49,7 @@ export const handler = async () => {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+
       },
       body: JSON.stringify({ error: 'Unable to fetch TryHackMe stats' }),
     };
