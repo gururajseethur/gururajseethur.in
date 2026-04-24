@@ -1,0 +1,3 @@
+🎯 **What:** The `useTryHackMeStats` hook lacked automated tests for its fallback mechanism, where a failing fetch to the Netlify serverless function should seamlessly trigger a direct API fetch to TryHackMe.
+📊 **Coverage:** Scenarios now tested include Netlify fetch success, Netlify fetch failure falling back to direct API success, both fetches failing defaulting to baseline state, and a server 500 error from Netlify correctly falling back.
+✨ **Result:** Test coverage for the custom hook is now comprehensive, ensuring the resilience and correct fallback behavior are preserved during future refactors.
