@@ -1,5 +1,11 @@
 const THM_USERNAME = 'Gururajseethur';
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+};
+
 export const handler = async () => {
   try {
     const response = await fetch(
@@ -11,6 +17,7 @@ export const handler = async () => {
         statusCode: 502,
         headers: {
           'Content-Type': 'application/json',
+          ...CORS_HEADERS,
         },
         body: JSON.stringify({ error: 'TryHackMe upstream failed' }),
       };
@@ -24,6 +31,7 @@ export const handler = async () => {
         statusCode: 502,
         headers: {
           'Content-Type': 'application/json',
+          ...CORS_HEADERS,
         },
         body: JSON.stringify({ error: 'Invalid room count from TryHackMe' }),
       };
@@ -34,6 +42,7 @@ export const handler = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300',
+        ...CORS_HEADERS,
       },
       body: JSON.stringify({
         roomCount,
@@ -46,6 +55,7 @@ export const handler = async () => {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
+        ...CORS_HEADERS,
       },
       body: JSON.stringify({ error: 'Unable to fetch TryHackMe stats' }),
     };
