@@ -4,7 +4,8 @@ import * as THREE from 'three';
 /* ── Performance-tuned constants ── */
 const CYAN_COUNT = 80;
 const RED_COUNT = 25;
-const LINE_MAX_DIST_SQ = 8100; // 90² — squared to avoid sqrt
+const LINE_MAX_DIST_SQ = 8100;
+const MAX_DIST = 90;
 const REPEL_RADIUS = 120;
 const TARGET_FPS = 30;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
@@ -127,17 +128,30 @@ export default function ParticleCanvas({ containerRef }) {
     function updateLines(particlePos, lineData, count) {
       let vi = 0;
       for (let i = 0; i < count; i++) {
+        const ix = i * 3;
+        const px = particlePos[ix];
+        const py = particlePos[ix + 1];
+        const pz = particlePos[ix + 2];
+
         for (let j = i + 1; j < count; j++) {
-          const dx = particlePos[i * 3]     - particlePos[j * 3];
-          const dy = particlePos[i * 3 + 1] - particlePos[j * 3 + 1];
-          const dz = particlePos[i * 3 + 2] - particlePos[j * 3 + 2];
+          const jx = j * 3;
+
+          const dx = px - particlePos[jx];
+          if (dx > MAX_DIST || dx < -MAX_DIST) continue;
+
+          const dy = py - particlePos[jx + 1];
+          if (dy > MAX_DIST || dy < -MAX_DIST) continue;
+
+          const dz = pz - particlePos[jx + 2];
+          if (dz > MAX_DIST || dz < -MAX_DIST) continue;
+
           if (dx * dx + dy * dy + dz * dz < LINE_MAX_DIST_SQ) {
-            lineData.positions[vi++] = particlePos[i * 3];
-            lineData.positions[vi++] = particlePos[i * 3 + 1];
-            lineData.positions[vi++] = particlePos[i * 3 + 2];
-            lineData.positions[vi++] = particlePos[j * 3];
-            lineData.positions[vi++] = particlePos[j * 3 + 1];
-            lineData.positions[vi++] = particlePos[j * 3 + 2];
+            lineData.positions[vi++] = px;
+            lineData.positions[vi++] = py;
+            lineData.positions[vi++] = pz;
+            lineData.positions[vi++] = particlePos[jx];
+            lineData.positions[vi++] = particlePos[jx + 1];
+            lineData.positions[vi++] = particlePos[jx + 2];
           }
         }
       }
