@@ -144,7 +144,6 @@ function BinaryStarSystem() {
     let burstActive = false;
     let burstT = 0;
     const origPosA = starA.geometry.attributes.position.array.slice();
-    const origPosB = starB.geometry.attributes.position.array.slice();
     const onClick = () => {
       burstActive = true; burstT = 0;
     };
