@@ -169,13 +169,54 @@ export default function Global3DBackground({ routeKey = '/' }) {
     networkGroup.add(nodePoints);
 
     const links = [];
+    const LINK_DISTANCE_SQ = LINK_DISTANCE * LINK_DISTANCE;
+    const invCellSize = 1 / LINK_DISTANCE;
+    const gridMap = new Map();
+
     for (let i = 0; i < networkNodeCount; i++) {
-      for (let j = i + 1; j < networkNodeCount; j++) {
-        const dx = networkPositions[i * 3] - networkPositions[j * 3];
-        const dy = networkPositions[i * 3 + 1] - networkPositions[j * 3 + 1];
-        const dz = networkPositions[i * 3 + 2] - networkPositions[j * 3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < LINK_DISTANCE) links.push([i, j]);
+      const cx = (Math.floor(networkPositions[i * 3] * invCellSize) + 512) & 1023;
+      const cy = (Math.floor(networkPositions[i * 3 + 1] * invCellSize) + 512) & 1023;
+      const cz = (Math.floor(networkPositions[i * 3 + 2] * invCellSize) + 512) & 1023;
+
+      const key = cx | (cy << 10) | (cz << 20);
+      let cell = gridMap.get(key);
+      if (!cell) {
+        gridMap.set(key, [i]);
+      } else {
+        cell.push(i);
+      }
+    }
+
+    for (let i = 0; i < networkNodeCount; i++) {
+      const x = networkPositions[i * 3];
+      const y = networkPositions[i * 3 + 1];
+      const z = networkPositions[i * 3 + 2];
+
+      const cx = (Math.floor(x * invCellSize) + 512) & 1023;
+      const cy = (Math.floor(y * invCellSize) + 512) & 1023;
+      const cz = (Math.floor(z * invCellSize) + 512) & 1023;
+
+      for (let ox = -1; ox <= 1; ox++) {
+        for (let oy = -1; oy <= 1; oy++) {
+          for (let oz = -1; oz <= 1; oz++) {
+            const key = ((cx + ox) & 1023) | (((cy + oy) & 1023) << 10) | (((cz + oz) & 1023) << 20);
+
+            let cell = gridMap.get(key);
+            if (cell) {
+              for (let k = 0; k < cell.length; k++) {
+                const j = cell[k];
+                if (j > i) {
+                  const dx = x - networkPositions[j * 3];
+                  const dy = y - networkPositions[j * 3 + 1];
+                  const dz = z - networkPositions[j * 3 + 2];
+                  if (dx * dx + dy * dy + dz * dz < LINK_DISTANCE_SQ) {
+                    links.push([i, j]);
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
