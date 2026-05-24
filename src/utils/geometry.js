@@ -24,8 +24,8 @@ export function generateBrainPositions(count) {
     // Cortex fold displacement
     const theta = Math.atan2(z, x);
     const fold = Math.sin(theta * 6) * 0.15 + Math.sin(theta * 3 + 1.5) * 0.1;
-    const r = Math.sqrt(x * x + y * y + z * z);
-    const surface = r > 1.2;
+    const rSq = x * x + y * y + z * z;
+    const surface = rSq > 1.44;
     if (surface) {
       x += Math.cos(theta) * fold;
       z += Math.sin(theta) * fold;
@@ -61,11 +61,12 @@ export function generateGlobePositions(count) {
     const r = isSurface ? radius : radius * Math.cbrt(Math.random());
 
     const theta = 2 * Math.PI * i / goldenRatio;
-    const phi = Math.acos(1 - 2 * (i + 0.5) / count);
+    const cosPhi = 1 - 2 * (i + 0.5) / count;
+    const sinPhi = Math.sqrt(1 - cosPhi * cosPhi);
 
-    positions[i3] = r * Math.cos(theta) * Math.sin(phi);
-    positions[i3 + 1] = r * Math.cos(phi);
-    positions[i3 + 2] = r * Math.sin(theta) * Math.sin(phi);
+    positions[i3] = r * Math.cos(theta) * sinPhi;
+    positions[i3 + 1] = r * cosPhi;
+    positions[i3 + 2] = r * Math.sin(theta) * sinPhi;
   }
 
   return positions;
