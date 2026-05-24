@@ -210,10 +210,9 @@ const ParticleUniverse = React.memo(function ParticleUniverse() {
           sp[idx + 1] = (Math.random() - 0.5) * 1.5;
           sp[idx + 2] = (Math.random() - 0.5) * 1.5;
           const speed = 0.02 + Math.random() * 0.04;
-          const dir = new THREE.Vector3(
+          shootVelocities[i].set(
             (Math.random() - 0.5), (Math.random() - 0.5), (Math.random() - 0.5)
           ).normalize().multiplyScalar(speed);
-          shootVelocities[i].copy(dir);
         }
       }
       shootGeo.attributes.position.needsUpdate = true;
