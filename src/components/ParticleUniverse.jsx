@@ -14,6 +14,8 @@ function spherePositions(count, radius) {
   return pos;
 }
 
+const tempDir = new THREE.Vector3();
+
 const ParticleUniverse = React.memo(function ParticleUniverse() {
   const containerRef = useRef(null);
 
@@ -204,16 +206,16 @@ const ParticleUniverse = React.memo(function ParticleUniverse() {
         sp[idx + 1] += shootVelocities[i].y;
         sp[idx + 2] += shootVelocities[i].z;
         // Reset when they exit boundary radius 5
-        const dist = Math.sqrt(sp[idx] ** 2 + sp[idx + 1] ** 2 + sp[idx + 2] ** 2);
-        if (dist > 5) {
+        const distSq = sp[idx] ** 2 + sp[idx + 1] ** 2 + sp[idx + 2] ** 2;
+        if (distSq > 25) {
           sp[idx]     = (Math.random() - 0.5) * 1.5;
           sp[idx + 1] = (Math.random() - 0.5) * 1.5;
           sp[idx + 2] = (Math.random() - 0.5) * 1.5;
           const speed = 0.02 + Math.random() * 0.04;
-          const dir = new THREE.Vector3(
+          tempDir.set(
             (Math.random() - 0.5), (Math.random() - 0.5), (Math.random() - 0.5)
           ).normalize().multiplyScalar(speed);
-          shootVelocities[i].copy(dir);
+          shootVelocities[i].copy(tempDir);
         }
       }
       shootGeo.attributes.position.needsUpdate = true;
