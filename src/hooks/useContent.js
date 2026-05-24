@@ -6,7 +6,7 @@
  */
 
 // Eager-load all .md files from /content at build time
-const allContent = import.meta.glob('/content/**/*.md', { eager: true });
+const allContent = import.meta.glob("/content/**/*.md", { eager: true });
 
 /**
  * @param {'projects' | 'blog' | 'videos'} collection — content subfolder
@@ -18,19 +18,17 @@ export function useContent(collection) {
   const items = Object.entries(allContent)
     .filter(([path]) => path.startsWith(prefix))
     .map(([path, mod]) => {
-      const slug = path
-        .replace(prefix, '')
-        .replace(/\.md$/, '');
+      const slug = path.slice(prefix.length, -3);
 
       return {
         slug,
         attributes: mod.attributes || {},
-        body: mod.body || '',
+        body: mod.body || "",
       };
     })
     .sort((a, b) => {
-      const da = a.attributes.date || '';
-      const db = b.attributes.date || '';
+      const da = a.attributes.date || "";
+      const db = b.attributes.date || "";
       return db.localeCompare(da);
     });
 
