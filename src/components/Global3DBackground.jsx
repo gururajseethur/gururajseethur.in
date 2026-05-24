@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import { createGlobalStarfield } from './three/GlobalStarfield';
+import { createGlobalCoreRings } from './three/GlobalCoreRings';
+import { createGlobalKeyframes } from './three/GlobalKeyframes';
+import { createGlobalNetwork } from './three/GlobalNetwork';
 
 const MOBILE_MAX_POINTS = 120;
 const DESKTOP_MAX_POINTS = 260;
@@ -53,176 +57,17 @@ export default function Global3DBackground({ routeKey = '/' }) {
     const group = new THREE.Group();
     scene.add(group);
 
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(pointCount * 3);
-    const seeds = new Float32Array(pointCount);
+    const starfield = createGlobalStarfield(pointCount, style, isMobile);
+    group.add(starfield.mesh);
 
-    for (let i = 0; i < pointCount; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const b = Math.acos(2 * Math.random() - 1);
-      const r = 6 + Math.random() * 8;
-      positions[i * 3] = r * Math.sin(b) * Math.cos(a);
-      positions[i * 3 + 1] = r * Math.sin(b) * Math.sin(a);
-      positions[i * 3 + 2] = r * Math.cos(b);
-      seeds[i] = Math.random() * Math.PI * 2;
-    }
+    const coreRings = createGlobalCoreRings(style, isMobile);
+    group.add(coreRings.mesh);
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const keyframes = createGlobalKeyframes(KEYFRAME_COUNT, style, isMobile);
+    group.add(keyframes.mesh);
 
-    const points = new THREE.Points(
-      geometry,
-      new THREE.PointsMaterial({
-        color: style.colorA,
-        size: isMobile ? 0.11 : 0.09,
-        transparent: true,
-        opacity: 0.42,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      })
-    );
-    group.add(points);
-
-    const core = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(isMobile ? 2.8 : 3.3, 1),
-      new THREE.MeshBasicMaterial({
-        color: style.colorB,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.22,
-      })
-    );
-    group.add(core);
-
-    const scanRing = new THREE.Mesh(
-      new THREE.RingGeometry(6.5, 6.9, 96),
-      new THREE.MeshBasicMaterial({
-        color: style.colorA,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.11,
-      })
-    );
-    scanRing.rotation.x = Math.PI * 0.5;
-    group.add(scanRing);
-
-    const timelineRing = new THREE.Mesh(
-      new THREE.TorusGeometry(isMobile ? 7 : 7.8, 0.035, 10, 120),
-      new THREE.MeshBasicMaterial({
-        color: style.colorB,
-        transparent: true,
-        opacity: 0.2,
-      })
-    );
-    timelineRing.rotation.x = Math.PI * 0.5;
-    group.add(timelineRing);
-
-    const keyframeGroup = new THREE.Group();
-    const keyframeGeometry = new THREE.BoxGeometry(0.28, 0.07, 0.07);
-    const keyframeMaterial = new THREE.MeshBasicMaterial({
-      color: style.colorB,
-      transparent: true,
-      opacity: 0.58,
-    });
-    const keyframes = [];
-    const timelineRadius = isMobile ? 7 : 7.8;
-
-    for (let i = 0; i < KEYFRAME_COUNT; i++) {
-      const theta = (i / KEYFRAME_COUNT) * Math.PI * 2;
-      const block = new THREE.Mesh(keyframeGeometry, keyframeMaterial);
-      block.position.set(
-        Math.cos(theta) * timelineRadius,
-        Math.sin(theta) * timelineRadius,
-        Math.sin(theta * 4) * 0.16
-      );
-      block.lookAt(0, 0, block.position.z);
-      keyframeGroup.add(block);
-      keyframes.push({ mesh: block, phase: Math.random() * Math.PI * 2 });
-    }
-
-    keyframeGroup.rotation.x = Math.PI * 0.5;
-    group.add(keyframeGroup);
-
-    const networkGroup = new THREE.Group();
-    const networkPositions = new Float32Array(networkNodeCount * 3);
-    const networkSeeds = new Float32Array(networkNodeCount);
-
-    for (let i = 0; i < networkNodeCount; i++) {
-      const theta = (i / networkNodeCount) * Math.PI * 2;
-      const radius = (isMobile ? 5.4 : 6.1) + Math.sin(theta * 3) * 0.55 + (Math.random() - 0.5) * 0.45;
-      networkPositions[i * 3] = Math.cos(theta) * radius;
-      networkPositions[i * 3 + 1] = Math.sin(theta) * radius;
-      networkPositions[i * 3 + 2] = (Math.random() - 0.5) * 1.6;
-      networkSeeds[i] = Math.random() * Math.PI * 2;
-    }
-
-    const nodeGeometry = new THREE.BufferGeometry();
-    nodeGeometry.setAttribute('position', new THREE.BufferAttribute(networkPositions, 3));
-    const nodeMaterial = new THREE.PointsMaterial({
-      color: style.colorA,
-      size: isMobile ? 0.16 : 0.13,
-      transparent: true,
-      opacity: 0.72,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-    });
-    const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
-    networkGroup.add(nodePoints);
-
-    const links = [];
-    for (let i = 0; i < networkNodeCount; i++) {
-      for (let j = i + 1; j < networkNodeCount; j++) {
-        const dx = networkPositions[i * 3] - networkPositions[j * 3];
-        const dy = networkPositions[i * 3 + 1] - networkPositions[j * 3 + 1];
-        const dz = networkPositions[i * 3 + 2] - networkPositions[j * 3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < LINK_DISTANCE) links.push([i, j]);
-      }
-    }
-
-    const linkPositions = new Float32Array(links.length * 6);
-    const linkGeometry = new THREE.BufferGeometry();
-    linkGeometry.setAttribute('position', new THREE.BufferAttribute(linkPositions, 3));
-    const linkMaterial = new THREE.LineBasicMaterial({
-      color: style.colorB,
-      transparent: true,
-      opacity: 0.24,
-    });
-    const linkSegments = new THREE.LineSegments(linkGeometry, linkMaterial);
-    networkGroup.add(linkSegments);
-
-    const packetGeometry = new THREE.SphereGeometry(isMobile ? 0.06 : 0.07, 10, 10);
-    const packetMaterial = new THREE.MeshBasicMaterial({
-      color: style.colorB,
-      transparent: true,
-      opacity: 0.9,
-    });
-    const packets = [];
-    for (let i = 0; i < packetCount; i++) {
-      const edgeIndex = Math.floor(Math.random() * Math.max(links.length, 1));
-      const mesh = new THREE.Mesh(packetGeometry, packetMaterial);
-      networkGroup.add(mesh);
-      packets.push({
-        mesh,
-        edgeIndex,
-        progress: Math.random(),
-        speed: 0.25 + Math.random() * 0.55,
-      });
-    }
-
-    const sweepMesh = new THREE.Mesh(
-      new THREE.RingGeometry(0.1, isMobile ? 6.9 : 7.7, 64, 1, 0, Math.PI / 7),
-      new THREE.MeshBasicMaterial({
-        color: style.colorA,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.12,
-      })
-    );
-    sweepMesh.rotation.x = Math.PI * 0.5;
-    networkGroup.add(sweepMesh);
-
-    networkGroup.rotation.x = Math.PI * 0.5;
-    group.add(networkGroup);
+    const network = createGlobalNetwork(networkNodeCount, packetCount, LINK_DISTANCE, style, isMobile);
+    group.add(network.mesh);
 
     const resize = () => {
       const w = window.innerWidth;
@@ -241,78 +86,14 @@ export default function Global3DBackground({ routeKey = '/' }) {
     const animate = (t) => {
       const elapsed = (t - start) * 0.001;
 
-      for (let i = 0; i < pointCount; i++) {
-        const idx = i * 3;
-        const w = elapsed * style.speed + seeds[i];
-        const drift = Math.sin(w) * style.noise;
-        positions[idx] += Math.cos(w * 0.37) * 0.002 + drift * 0.0007;
-        positions[idx + 1] += Math.sin(w * 0.31) * 0.002;
-        positions[idx + 2] += Math.cos(w * 0.23) * 0.0014;
-      }
+      starfield.update(elapsed, style);
 
-      geometry.attributes.position.needsUpdate = true;
       group.rotation.y = elapsed * style.speed * 0.32;
       group.rotation.x = Math.sin(elapsed * 0.26) * 0.14;
-      core.rotation.x += 0.002;
-      core.rotation.y -= 0.0018;
-      scanRing.rotation.z += 0.0036;
-      timelineRing.rotation.z -= 0.0022;
-      keyframeGroup.rotation.z += 0.0032;
-      networkGroup.rotation.z -= 0.0018;
-      sweepMesh.rotation.z += 0.014;
-      sweepMesh.material.opacity = 0.08 + (Math.sin(elapsed * 2.4) + 1) * 0.035;
 
-      for (let i = 0; i < networkNodeCount; i++) {
-        const idx = i * 3;
-        const w = elapsed * (style.speed * 0.8) + networkSeeds[i];
-        networkPositions[idx] += Math.sin(w * 0.9) * 0.0018;
-        networkPositions[idx + 1] += Math.cos(w * 0.7) * 0.0016;
-        networkPositions[idx + 2] = Math.sin(w * 0.5) * 0.8;
-      }
-      nodeGeometry.attributes.position.needsUpdate = true;
-
-      for (let i = 0; i < links.length; i++) {
-        const [a, b] = links[i];
-        const li = i * 6;
-        linkPositions[li] = networkPositions[a * 3];
-        linkPositions[li + 1] = networkPositions[a * 3 + 1];
-        linkPositions[li + 2] = networkPositions[a * 3 + 2];
-        linkPositions[li + 3] = networkPositions[b * 3];
-        linkPositions[li + 4] = networkPositions[b * 3 + 1];
-        linkPositions[li + 5] = networkPositions[b * 3 + 2];
-      }
-      linkGeometry.attributes.position.needsUpdate = true;
-
-      for (let i = 0; i < packets.length; i++) {
-        const packet = packets[i];
-        if (links.length === 0) continue;
-        const [a, b] = links[packet.edgeIndex];
-        const ax = networkPositions[a * 3];
-        const ay = networkPositions[a * 3 + 1];
-        const az = networkPositions[a * 3 + 2];
-        const bx = networkPositions[b * 3];
-        const by = networkPositions[b * 3 + 1];
-        const bz = networkPositions[b * 3 + 2];
-
-        packet.progress += packet.speed * 0.01;
-        if (packet.progress >= 1) {
-          packet.progress = 0;
-          packet.edgeIndex = Math.floor(Math.random() * links.length);
-        }
-
-        packet.mesh.position.set(
-          ax + (bx - ax) * packet.progress,
-          ay + (by - ay) * packet.progress,
-          az + (bz - az) * packet.progress
-        );
-      }
-
-      for (let i = 0; i < keyframes.length; i++) {
-        const entry = keyframes[i];
-        const pulse = 1 + Math.sin(elapsed * 2.6 + entry.phase) * 0.22;
-        entry.mesh.scale.x = pulse;
-        entry.mesh.scale.y = 1 + Math.sin(elapsed * 2 + entry.phase) * 0.08;
-      }
+      coreRings.update(elapsed, style);
+      keyframes.update(elapsed, style);
+      network.update(elapsed, style);
 
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
@@ -323,24 +104,10 @@ export default function Global3DBackground({ routeKey = '/' }) {
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener('resize', resize);
-      geometry.dispose();
-      points.material.dispose();
-      core.geometry.dispose();
-      core.material.dispose();
-      scanRing.geometry.dispose();
-      scanRing.material.dispose();
-      timelineRing.geometry.dispose();
-      timelineRing.material.dispose();
-      keyframeGeometry.dispose();
-      keyframeMaterial.dispose();
-      nodeGeometry.dispose();
-      nodeMaterial.dispose();
-      linkGeometry.dispose();
-      linkMaterial.dispose();
-      packetGeometry.dispose();
-      packetMaterial.dispose();
-      sweepMesh.geometry.dispose();
-      sweepMesh.material.dispose();
+      starfield.dispose();
+      coreRings.dispose();
+      keyframes.dispose();
+      network.dispose();
       renderer.dispose();
     };
   }, [style]);
