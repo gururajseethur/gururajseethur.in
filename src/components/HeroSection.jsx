@@ -1,6 +1,7 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { lazy, useState, useEffect, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import BinaryStarSystem from './three/BinaryStarSystem';
+
+const BinaryStarSystem = lazy(() => import('./three/BinaryStarSystem'));
 
 const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -30,6 +31,34 @@ const STATS = [
   { num: '🏆',   label: 'EOTQ Apr–Jun 25'  },
 ];
 
+function StarfieldFallback() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        className="animate-spin"
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: '999px',
+          border: '1px solid rgba(255,255,255,0.12)',
+          borderTopColor: 'rgba(0,217,255,0.75)',
+          boxShadow: '0 0 28px rgba(0,217,255,0.18)',
+        }}
+      />
+    </div>
+  );
+}
+
 export default function HeroSection() {
   const [entered, setEntered] = useState(false);
 
@@ -56,7 +85,7 @@ export default function HeroSection() {
       >
         {/* 3D Canvas */}
         {!IS_MOBILE && (
-          <Suspense fallback={null}>
+          <Suspense fallback={<StarfieldFallback />}>
             <BinaryStarSystem />
           </Suspense>
         )}
