@@ -107,7 +107,6 @@ function RouteScene({ routeKey, particleCount, isMobile }) {
 
 /* ─── /projects — Wireframe Grid Lattice ─── */
 function GridLattice({ count }) {
-  const meshRef = useRef();
   const pointsRef = useRef();
 
   const { positions, colors } = useMemo(() => {
