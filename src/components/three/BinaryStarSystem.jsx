@@ -9,6 +9,7 @@ function buildGalaxyDisc(count, color1Hex, color2Hex, size) {
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
   const c1 = new THREE.Color(color1Hex);
   const c2 = new THREE.Color(color2Hex);
+  const col = new THREE.Color();
 
   for (let i = 0; i < count; i++) {
     const angle  = i * goldenAngle;
@@ -19,7 +20,7 @@ function buildGalaxyDisc(count, color1Hex, color2Hex, size) {
     positions[i * 3 + 2] = Math.sin(angle) * radius + spread;
 
     const t = radius / 3.0;
-    const col = c1.clone().lerp(c2, Math.min(t, 1));
+    col.copy(c1).lerp(c2, Math.min(t, 1));
     colors[i * 3]     = col.r;
     colors[i * 3 + 1] = col.g;
     colors[i * 3 + 2] = col.b;
