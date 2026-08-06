@@ -143,12 +143,20 @@ function ExperienceEntry({ exp, index }) {
 
         {/* Bullets */}
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {exp.bullets.slice(0, 2).map((b, i) => (
-            <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ color: accentColor, opacity: 0.5, fontSize: 10, marginTop: 5, flexShrink: 0 }}>▶</span>
-              <span style={{ fontSize: 16, color: '#888', lineHeight: 1.8 }}>{b}</span>
-            </li>
-          ))}
+          {(() => {
+            const items = [];
+            const len = Math.min(exp.bullets.length, 2);
+            for (let i = 0; i < len; i++) {
+              const b = exp.bullets[i];
+              items.push(
+                <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                  <span style={{ color: accentColor, opacity: 0.5, fontSize: 10, marginTop: 5, flexShrink: 0 }}>▶</span>
+                  <span style={{ fontSize: 16, color: '#888', lineHeight: 1.8 }}>{b}</span>
+                </li>
+              );
+            }
+            return items;
+          })()}
         </ul>
       </div>
     </div>
