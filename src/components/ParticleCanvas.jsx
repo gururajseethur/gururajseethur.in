@@ -123,24 +123,79 @@ export default function ParticleCanvas({ containerRef }) {
       }
     }
 
-    /* ── Lines: update pre-allocated buffer ── */
+
+    /* ── Spatial Hashing Grid Setup ── */
+    const CELL_SIZE = 90; // sqrt(LINE_MAX_DIST_SQ)
+    const GRID_COLS = Math.ceil((BOUND * 2) / CELL_SIZE);
+    const GRID_ROWS = Math.ceil((BOUND * 2) / CELL_SIZE);
+    const gridHead = new Int32Array(GRID_COLS * GRID_ROWS);
+    const MAX_PARTICLES = Math.max(CYAN_COUNT, RED_COUNT);
+    const gridNext = new Int32Array(MAX_PARTICLES);
+
+    /* ── Lines: update pre-allocated buffer (Optimized O(N) Spatial Hashing) ── */
     function updateLines(particlePos, lineData, count) {
       let vi = 0;
+      gridHead.fill(-1);
+
+      // 1. Build grid
       for (let i = 0; i < count; i++) {
-        for (let j = i + 1; j < count; j++) {
-          const dx = particlePos[i * 3]     - particlePos[j * 3];
-          const dy = particlePos[i * 3 + 1] - particlePos[j * 3 + 1];
-          const dz = particlePos[i * 3 + 2] - particlePos[j * 3 + 2];
-          if (dx * dx + dy * dy + dz * dz < LINE_MAX_DIST_SQ) {
-            lineData.positions[vi++] = particlePos[i * 3];
-            lineData.positions[vi++] = particlePos[i * 3 + 1];
-            lineData.positions[vi++] = particlePos[i * 3 + 2];
-            lineData.positions[vi++] = particlePos[j * 3];
-            lineData.positions[vi++] = particlePos[j * 3 + 1];
-            lineData.positions[vi++] = particlePos[j * 3 + 2];
+        let cx = Math.floor((particlePos[i * 3] + BOUND) / CELL_SIZE);
+        let cy = Math.floor((particlePos[i * 3 + 1] + BOUND) / CELL_SIZE);
+
+        if (cx < 0) cx = 0; else if (cx >= GRID_COLS) cx = GRID_COLS - 1;
+        if (cy < 0) cy = 0; else if (cy >= GRID_ROWS) cy = GRID_ROWS - 1;
+
+        const cellIdx = cy * GRID_COLS + cx;
+        gridNext[i] = gridHead[cellIdx];
+        gridHead[cellIdx] = i;
+      }
+
+      // 2. Check pairs using spatial grid
+      for (let cy = 0; cy < GRID_ROWS; cy++) {
+        for (let cx = 0; cx < GRID_COLS; cx++) {
+          const cellIdx = cy * GRID_COLS + cx;
+          let i = gridHead[cellIdx];
+
+          while (i !== -1) {
+            const ix = i * 3;
+            const px = particlePos[ix];
+            const py = particlePos[ix + 1];
+            const pz = particlePos[ix + 2];
+
+            // Check own cell (forward only) and 4 neighboring cells (half-neighborhood)
+            const neighbors = [
+              gridNext[i], // same cell
+              cx + 1 < GRID_COLS ? gridHead[cellIdx + 1] : -1, // right
+              cy + 1 < GRID_ROWS && cx - 1 >= 0 ? gridHead[cellIdx + GRID_COLS - 1] : -1, // bottom-left
+              cy + 1 < GRID_ROWS ? gridHead[cellIdx + GRID_COLS] : -1, // bottom
+              cy + 1 < GRID_ROWS && cx + 1 < GRID_COLS ? gridHead[cellIdx + GRID_COLS + 1] : -1 // bottom-right
+            ];
+
+            for (let k = 0; k < 5; k++) {
+              let nj = neighbors[k];
+              while (nj !== -1) {
+                const jx = nj * 3;
+                const dx = px - particlePos[jx];
+                const dy = py - particlePos[jx + 1];
+                const dz = pz - particlePos[jx + 2];
+
+                if (dx * dx + dy * dy + dz * dz < LINE_MAX_DIST_SQ) {
+                  lineData.positions[vi++] = px;
+                  lineData.positions[vi++] = py;
+                  lineData.positions[vi++] = pz;
+                  lineData.positions[vi++] = particlePos[jx];
+                  lineData.positions[vi++] = particlePos[jx + 1];
+                  lineData.positions[vi++] = particlePos[jx + 2];
+                }
+                nj = gridNext[nj];
+              }
+            }
+
+            i = gridNext[i];
           }
         }
       }
+
       lineData.geo.setDrawRange(0, vi / 3);
       lineData.geo.attributes.position.needsUpdate = true;
     }
