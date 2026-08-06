@@ -56,15 +56,16 @@ export default function Global3DBackground({ routeKey = '/' }) {
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(pointCount * 3);
     const seeds = new Float32Array(pointCount);
+    const PI2 = Math.PI * 2;
 
     for (let i = 0; i < pointCount; i++) {
-      const a = Math.random() * Math.PI * 2;
+      const a = Math.random() * PI2;
       const b = Math.acos(2 * Math.random() - 1);
       const r = 6 + Math.random() * 8;
       positions[i * 3] = r * Math.sin(b) * Math.cos(a);
       positions[i * 3 + 1] = r * Math.sin(b) * Math.sin(a);
       positions[i * 3 + 2] = r * Math.cos(b);
-      seeds[i] = Math.random() * Math.PI * 2;
+      seeds[i] = Math.random() * PI2;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -127,7 +128,7 @@ export default function Global3DBackground({ routeKey = '/' }) {
     const timelineRadius = isMobile ? 7 : 7.8;
 
     for (let i = 0; i < KEYFRAME_COUNT; i++) {
-      const theta = (i / KEYFRAME_COUNT) * Math.PI * 2;
+      const theta = (i / KEYFRAME_COUNT) * PI2;
       const block = new THREE.Mesh(keyframeGeometry, keyframeMaterial);
       block.position.set(
         Math.cos(theta) * timelineRadius,
@@ -136,7 +137,7 @@ export default function Global3DBackground({ routeKey = '/' }) {
       );
       block.lookAt(0, 0, block.position.z);
       keyframeGroup.add(block);
-      keyframes.push({ mesh: block, phase: Math.random() * Math.PI * 2 });
+      keyframes.push({ mesh: block, phase: Math.random() * PI2 });
     }
 
     keyframeGroup.rotation.x = Math.PI * 0.5;
@@ -147,12 +148,12 @@ export default function Global3DBackground({ routeKey = '/' }) {
     const networkSeeds = new Float32Array(networkNodeCount);
 
     for (let i = 0; i < networkNodeCount; i++) {
-      const theta = (i / networkNodeCount) * Math.PI * 2;
+      const theta = (i / networkNodeCount) * PI2;
       const radius = (isMobile ? 5.4 : 6.1) + Math.sin(theta * 3) * 0.55 + (Math.random() - 0.5) * 0.45;
       networkPositions[i * 3] = Math.cos(theta) * radius;
       networkPositions[i * 3 + 1] = Math.sin(theta) * radius;
       networkPositions[i * 3 + 2] = (Math.random() - 0.5) * 1.6;
-      networkSeeds[i] = Math.random() * Math.PI * 2;
+      networkSeeds[i] = Math.random() * PI2;
     }
 
     const nodeGeometry = new THREE.BufferGeometry();
