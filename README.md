@@ -9,7 +9,7 @@
 
 Source code for **[gururajseethur.in](https://gururajseethur.in)** - my personal portfolio.
 
-Built with React + Vite, deployed on Netlify, fronted by Cloudflare DNS. The site covers what I am building (Cyber Range Labs, HEXAVAULT, local AI security tools), what I have shipped (CEH v12, BIA Master-Diploma in progress, TryHackMe rooms), and the filmmaking / marketing side of my work.
+Built with React + Vite, deployed on Netlify, fronted by Cloudflare DNS. The site covers what I am building (Cyber Range Labs, HEXAVAULT, local AI security tools), what I have shipped (CEH, BIA Master-Diploma in progress, TryHackMe rooms), and the filmmaking / marketing side of my work.
 
 ## Run locally
 
