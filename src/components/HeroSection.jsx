@@ -26,7 +26,7 @@ const MARQUEE_ITEMS = [
 const STATS = [
   { num: '4+',   label: 'Years Experience' },
   { num: '54+',  label: 'THM Rooms'        },
-  { num: 'CEH',  label: 'In Progress'      },
+  { num: 'CEH',  label: 'Certified'        },
   { num: '🏆',   label: 'EOTQ Apr–Jun 25'  },
 ];
 
