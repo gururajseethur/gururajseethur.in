@@ -247,13 +247,6 @@ const PROJECTS = [
     tags: ['FFmpeg', 'Shell', 'DaVinci Resolve'],
   },
   {
-    category: 'SECURITY',
-    status: 'Active',
-    name: 'CTF Write-ups',
-    description: 'Documented solutions to 63+ TryHackMe rooms, covering web exploitation, privilege escalation, and forensics.',
-    tags: ['Markdown', 'Linux', 'Web Exploitation'],
-  },
-  {
     category: 'WEB / PORTFOLIO',
     status: 'Deployed',
     name: 'gururajseethur.in',
