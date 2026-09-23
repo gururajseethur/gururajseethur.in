@@ -10,7 +10,7 @@ const NAV = [
 ];
 
 const SOCIALS = [
-  { icon: 'LI', label: 'LinkedIn',  href: 'https://linkedin.com/in/gururajseethur' },
+  { icon: 'LI', label: 'LinkedIn',  href: 'https://www.linkedin.com/in/gururaj-seethur' },
   { icon: 'GH', label: 'GitHub',    href: 'https://github.com/gururajseethur' },
   { icon: 'TH', label: 'THM',       href: 'https://tryhackme.com/p/Gururajseethur' },
   { icon: '✉',  label: 'Email',     href: 'mailto:gururajseethur@gmail.com' },
