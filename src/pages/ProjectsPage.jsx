@@ -249,8 +249,8 @@ const PROJECTS = [
   {
     category: 'SECURITY',
     status: 'Active',
-    name: 'CTF Write-ups Repository',
-    description: 'Documented solutions to 54+ TryHackMe rooms, covering web exploitation, privilege escalation, and forensics.',
+    name: 'CTF Write-ups',
+    description: 'Documented solutions to 63+ TryHackMe rooms, covering web exploitation, privilege escalation, and forensics.',
     tags: ['Markdown', 'Linux', 'Web Exploitation'],
   },
   {

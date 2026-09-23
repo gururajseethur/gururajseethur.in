@@ -10,7 +10,7 @@ const BOOT_LINES = [
   '[    0.892] Mounting encrypted volumes...',
   '[    1.204] Loading TryHackMe profile: Gururajseethur',
   '[    1.587] Verifying CEH certification... OK',
-  '[    1.891] 54+ rooms completed. Scanning active...',
+  '[    1.891] 63+ rooms completed. Scanning active...',
   '[    2.203] ',
   '[    2.203] \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 100%',
   '[    2.501] ACCESS GRANTED',
@@ -197,11 +197,11 @@ export default function SecurityPage() {
                 TryHackMe
               </h2>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00D9FF', marginBottom: 20 }}>
-                54+ rooms &middot; OSCP trajectory &middot; CEH Certified
+                63+ rooms &middot; OSCP trajectory &middot; CEH Certified
               </p>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 0 }}>
                 {[
-                  { label: `${loading ? '54+' : roomCount} Rooms` },
+                  { label: `${loading ? '63+' : roomCount} Rooms` },
                   { label: 'CEH \u2713' },
                 ].map(s => (
                   <span key={s.label} style={{

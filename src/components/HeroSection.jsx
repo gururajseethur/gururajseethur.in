@@ -15,7 +15,7 @@ const MARQUEE_ITEMS = [
   { text: '·',                   color: '#1C1C24' },
   { text: 'CEH CERTIFIED',        color: '#FF3B3B' },
   { text: '·',                   color: '#1C1C24' },
-  { text: '54+ THM ROOMS',        color: '#50505A' },
+  { text: '63+ THM ROOMS',        color: '#50505A' },
   { text: '·',                   color: '#1C1C24' },
   { text: 'STORYTELLER',         color: '#00D9FF' },
   { text: '·',                   color: '#1C1C24' },
@@ -25,7 +25,7 @@ const MARQUEE_ITEMS = [
 
 const STATS = [
   { num: '4+',   label: 'Years Experience' },
-  { num: '54+',  label: 'THM Rooms'        },
+  { num: '63+',  label: 'THM Rooms'        },
   { num: 'CEH',  label: 'Certified'        },
   { num: '🏆',   label: 'EOTQ Apr–Jun 25'  },
 ];
@@ -123,7 +123,7 @@ export default function HeroSection() {
             </span>
             <div style={{ width: 1, height: 16, background: '#1C1C24', margin: '0 20px' }} />
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00D9FF' }}>
-              🔐 CEH · Pentester · 54+ THM Rooms
+              🔐 CEH · Pentester · 63+ THM Rooms
             </span>
           </div>
 
