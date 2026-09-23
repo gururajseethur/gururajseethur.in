@@ -145,7 +145,7 @@ function AvatarCard() {
             GS
           </div>
           <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 16, color: '#FFFFFF', marginTop: 8 }}>
-            Gururaj Seethur
+            Gururaj Seethuru
           </div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#50505A', marginTop: 4 }}>
             Filmmaker · Ethical Hacker
