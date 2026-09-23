@@ -4,7 +4,7 @@ import useScrollReveal from '../hooks/useScrollReveal';
 const CONTACT_ITEMS = [
   { icon: '✉', label: 'Email',      value: 'gururajseethur@gmail.com',               href: 'mailto:gururajseethur@gmail.com' },
   { icon: '📞', label: 'Phone',      value: '+91 8762714344',                           href: 'tel:+918762714344' },
-  { icon: '💼', label: 'LinkedIn',   value: 'linkedin.com/in/gururajseethur',          href: 'https://linkedin.com/in/gururajseethur' },
+  { icon: '💼', label: 'LinkedIn',   value: 'linkedin.com/in/gururaj-seethur',        href: 'https://www.linkedin.com/in/gururaj-seethur' },
   { icon: '🔐', label: 'TryHackMe',  value: 'tryhackme.com/p/Gururajseethur',          href: 'https://tryhackme.com/p/Gururajseethur' },
 ];
 
