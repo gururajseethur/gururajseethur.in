@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ borderTop: '1px solid #0E0E12', marginTop: 48, paddingTop: 24, textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#333', margin: 0 }}>
-            © 2025 Gururaj Seethur. Designed &amp; Built by Gururaj.
+            © 2025 Gururaj Seethuru. Designed &amp; Built by Gururaj.
           </p>
         </div>
       </div>
