@@ -1,21 +1,21 @@
 export const seoConfig = {
-  siteName: 'Gururaj Seethur',
+  siteName: 'Gururaj Seethuru',
   siteUrl: 'https://gururajseethur.in',
-  defaultTitle: 'Gururaj Seethur - Filmmaker & Ethical Hacker | Bengaluru',
-  titleTemplate: '%s | Gururaj Seethur',
+  defaultTitle: 'Gururaj Seethuru - Filmmaker & Ethical Hacker | Bengaluru',
+  titleTemplate: '%s | Gururaj Seethuru',
   defaultDescription:
-    'Gururaj Seethur is a filmmaker, video editor, ethical hacker, and AI builder based in Bengaluru.',
-  author: 'Gururaj Seethur',
+    'Gururaj Seethuru is a filmmaker, video editor, ethical hacker, and AI builder based in Bengaluru.',
+  author: 'Gururaj Seethuru',
   locale: 'en_IN',
   twitterCard: 'summary_large_image',
   twitterCreator: '@Gururajseethur',
   routeDescriptions: {
-    '/': 'Gururaj Seethur is a filmmaker, video editor, ethical hacker, and AI builder based in Bengaluru.',
-    '/projects': 'Explore technical projects, pentest tools, AI systems, and creative work by Gururaj Seethur.',
-    '/security': 'Security lab, TryHackMe progress, CTF practice, and ethical hacking work by Gururaj Seethur.',
-    '/creative': 'Creative direction, filmmaking, editing, and visual storytelling work by Gururaj Seethur.',
-    '/videos': 'Selected video, filmmaking, and post-production work by Gururaj Seethur.',
-    '/contact': 'Contact Gururaj Seethur for security, AI, creative, and technical collaboration.',
+    '/': 'Gururaj Seethuru is a filmmaker, video editor, ethical hacker, and AI builder based in Bengaluru.',
+    '/projects': 'Explore technical projects, pentest tools, AI systems, and creative work by Gururaj Seethuru.',
+    '/security': 'Security lab, TryHackMe progress, CTF practice, and ethical hacking work by Gururaj Seethuru.',
+    '/creative': 'Creative direction, filmmaking, editing, and visual storytelling work by Gururaj Seethuru.',
+    '/videos': 'Selected video, filmmaking, and post-production work by Gururaj Seethuru.',
+    '/contact': 'Contact Gururaj Seethuru for security, AI, creative, and technical collaboration.',
   },
 };
 
