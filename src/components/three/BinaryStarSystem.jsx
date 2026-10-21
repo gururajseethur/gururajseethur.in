@@ -199,8 +199,6 @@ function BinaryStarSystem() {
       // Burst
       if (burstActive) {
         burstT += 0.016;
-        const burstle = Math.min(burstT / 2.0, 1);
-        const ease = burstT < 1.0 ? (1 - burstle) * 0.3 : 0;
         // Scatter -> settle: done via opacity flash
         bridgeMat.opacity = 0.6 * (1 - burstT / 2.5);
         if (burstT > 2.5) { burstActive = false; burstT = 0; }
