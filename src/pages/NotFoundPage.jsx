@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function NotFoundPage() {
   const [typed, setTyped] = useState('');
-  const fullText = `$ curl -I gururajseethur.in${typeof window !== 'undefined' ? window.location.pathname : '/???'}
+  const fullText = `$ curl -I gururajseethur.in${typeof window !== 'undefined' ? encodeURI(window.location.pathname) : '/???'}
 HTTP/1.1 404 Not Found
 X-Powered-By: curiosity
 X-Suggestion: try /`;
