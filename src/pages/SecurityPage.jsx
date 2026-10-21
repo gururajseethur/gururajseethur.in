@@ -129,54 +129,11 @@ function SkillTag({ label }) {
   );
 }
 
-export default function SecurityPage() {
-  const [booted, setBooted] = useState(() =>
-    typeof window !== 'undefined' && !!sessionStorage.getItem('securityBooted')
-  );
-  const [hoverRow, setHoverRow] = useState(null);
-  const { roomCount, loading } = useTryHackMeStats();
 
-  const handleDone = useCallback(() => {
-    sessionStorage.setItem('securityBooted', '1');
-    setBooted(true);
-  }, []);
 
-  const pad = IS_MOBILE ? '88px 20px 64px' : '120px max(48px, 5vw) 80px';
-
+function TryHackMeCard({ loading, roomCount }) {
   return (
-    <>
-      {!booted && <BootOverlay onDone={handleDone} />}
-
-      <div className="scanlines" style={{
-        minHeight: '100vh',
-        background: '#070709',
-        padding: pad,
-      }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-
-          {/* ── Header ── */}
-          <div style={{ marginBottom: IS_MOBILE ? 48 : 80 }}>
-            <div style={{
-              display: 'inline-block',
-              fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
-              border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
-              marginBottom: 20,
-            }}>
-              // SECURITY
-            </div>
-            <h1 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: IS_MOBILE ? 36 : 'clamp(40px,6vw,64px)',
-              color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 16px',
-            }}>
-              Ethical Hacker<br />
-              <span style={{ color: '#00D9FF' }}>in progress.</span>
-            </h1>
-            <p style={{ fontSize: 15, color: '#666', maxWidth: 480, lineHeight: 1.6, margin: 0 }}>
-              Pivoting from filmmaker to penetration tester. OSCP is the target.
-            </p>
-          </div>
-
+          <>
           {/* ── TryHackMe card ── */}
           <div style={{
             background: 'rgba(0,217,255,0.03)',
@@ -249,7 +206,14 @@ export default function SecurityPage() {
               </a>
             </div>
           </div>
+          </>
+  );
+}
 
+
+function AttackPhases() {
+  return (
+          <>
           {/* ── Attack Phases ── */}
           <div style={{ marginBottom: IS_MOBILE ? 40 : 64 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 20 : 32 }}>
@@ -279,7 +243,16 @@ export default function SecurityPage() {
               ))}
             </div>
           </div>
+          </>
+  );
+}
 
+
+function CompletedRooms() {
+  const [hoverRow, setHoverRow] = useState(null);
+
+  return (
+          <>
           {/* ── CTF Table ── */}
           <div>
             <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 16 : 24 }}>
@@ -354,6 +327,63 @@ export default function SecurityPage() {
               </>
             )}
           </div>
+          </>
+  );
+}
+
+export default function SecurityPage() {
+  const [booted, setBooted] = useState(() =>
+    typeof window !== 'undefined' && !!sessionStorage.getItem('securityBooted')
+  );
+  const { roomCount, loading } = useTryHackMeStats();
+
+  const handleDone = useCallback(() => {
+    sessionStorage.setItem('securityBooted', '1');
+    setBooted(true);
+  }, []);
+
+  const pad = IS_MOBILE ? '88px 20px 64px' : '120px max(48px, 5vw) 80px';
+
+  return (
+    <>
+      {!booted && <BootOverlay onDone={handleDone} />}
+
+      <div className="scanlines" style={{
+        minHeight: '100vh',
+        background: '#070709',
+        padding: pad,
+      }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+
+          {/* ── Header ── */}
+          <div style={{ marginBottom: IS_MOBILE ? 48 : 80 }}>
+            <div style={{
+              display: 'inline-block',
+              fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
+              border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
+              marginBottom: 20,
+            }}>
+              // SECURITY
+            </div>
+            <h1 style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: IS_MOBILE ? 36 : 'clamp(40px,6vw,64px)',
+              color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 16px',
+            }}>
+              Ethical Hacker<br />
+              <span style={{ color: '#00D9FF' }}>in progress.</span>
+            </h1>
+            <p style={{ fontSize: 15, color: '#666', maxWidth: 480, lineHeight: 1.6, margin: 0 }}>
+              Pivoting from filmmaker to penetration tester. OSCP is the target.
+            </p>
+          </div>
+
+          <TryHackMeCard loading={loading} roomCount={roomCount} />
+
+          <AttackPhases />
+
+          <CompletedRooms />
+
 
         </div>
       </div>
