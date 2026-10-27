@@ -1,148 +1,109 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function CursorEffect() {
-  const dotRef   = useRef(null);
-  const ringRef  = useRef(null);
-  const posRef   = useRef({ x: -100, y: -100 });
-  const ringPos  = useRef({ x: -100, y: -100 });
-  const rafRef   = useRef(null);
-  const [hoverType, setHoverType] = useState(null); // null | 'default' | 'red' | 'cyan'
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
+  const posRef = useRef({ x: -100, y: -100 });
+  const ringPos = useRef({ x: -100, y: -100 });
+  const rafRef = useRef(null);
+  const [hoverType, setHoverType] = useState(null); // null | 'interactive' | 'amber' | 'cyan'
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    // Only enable custom cursor on fine pointer devices (desktop with mouse)
+    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    if (!hasPointer) return;
+    setEnabled(true);
+
     const onMove = (e) => {
       posRef.current = { x: e.clientX, y: e.clientY };
 
       const el = document.elementFromPoint(e.clientX, e.clientY);
       if (!el) return;
+      const isAmber = el.closest('.cursor-amber') || el.closest('[data-cursor="amber"]');
+      const isCyan = el.closest('.cursor-cyan') || el.closest('[data-cursor="cyan"]');
       const isInteractive = el.closest('a, button, [data-cursor], input, textarea, select, label');
-      const isRed  = el.closest('.cursor-red');
-      const isCyan = el.closest('.cursor-cyan');
 
-      if (isRed)        setHoverType('red');
-      else if (isCyan)  setHoverType('cyan');
-      else if (isInteractive) setHoverType('default');
-      else              setHoverType(null);
+      if (isAmber) setHoverType('amber');
+      else if (isCyan) setHoverType('cyan');
+      else if (isInteractive) setHoverType('interactive');
+      else setHoverType(null);
     };
 
     const loop = () => {
       const { x, y } = posRef.current;
       const rx = ringPos.current.x;
       const ry = ringPos.current.y;
-      const lerpFactor = 0.12;
+      const lerpFactor = 0.16;
       ringPos.current.x = rx + (x - rx) * lerpFactor;
       ringPos.current.y = ry + (y - ry) * lerpFactor;
 
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${x}px, ${y}px)`;
+        dotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       }
       if (ringRef.current) {
-        ringRef.current.style.transform =
-          `translate(${ringPos.current.x}px, ${ringPos.current.y}px)`;
+        ringRef.current.style.transform = `translate3d(${ringPos.current.x}px, ${ringPos.current.y}px, 0)`;
       }
       rafRef.current = requestAnimationFrame(loop);
     };
 
-    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mousemove', onMove, { passive: true });
     rafRef.current = requestAnimationFrame(loop);
+
     return () => {
       window.removeEventListener('mousemove', onMove);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
-  /* ── Derived styles from hover type ── */
-  const isHover   = hoverType !== null;
-  const isRed     = hoverType === 'red';
-  const isCyan    = hoverType === 'cyan';
+  if (!enabled) return null;
 
-  const dotStyle = {
-    position: 'fixed',
-    top: 0, left: 0,
-    pointerEvents: 'none',
-    zIndex: 99999,
-    willChange: 'transform',
-    marginLeft: isHover ? '-3px' : '-4px',
-    marginTop:  isHover ? '-3px' : '-4px',
+  const getRingColor = () => {
+    if (hoverType === 'amber') return 'rgba(255, 182, 92, 0.7)';
+    if (hoverType === 'cyan') return 'rgba(89, 225, 255, 0.8)';
+    if (hoverType === 'interactive') return 'rgba(82, 118, 255, 0.65)';
+    return 'rgba(89, 225, 255, 0.3)';
   };
 
-  const ringStyle = {
-    position: 'fixed',
-    top: 0, left: 0,
-    pointerEvents: 'none',
-    zIndex: 99998,
-    willChange: 'transform',
-    transition: 'width 0.3s ease, height 0.3s ease, border-color 0.3s ease',
-    borderRadius: '50%',
-    border: isRed
-      ? '1px solid #FF3B3B'
-      : isCyan
-      ? '1px solid #00D9FF'
-      : isHover
-      ? '1px solid transparent'
-      : '1px solid rgba(255,255,255,0.3)',
-    width:  isHover ? '56px' : '32px',
-    height: isHover ? '56px' : '32px',
-    marginLeft: isHover ? '-28px' : '-16px',
-    marginTop:  isHover ? '-28px' : '-16px',
-    background: isRed
-      ? 'rgba(255,59,59,0.05)'
-      : isCyan
-      ? 'rgba(0,217,255,0.05)'
-      : isHover
-      ? 'conic-gradient(from 0deg, #FF3B3B 0deg 180deg, #00D9FF 180deg 360deg) border-box'
-      : 'transparent',
-    boxShadow: isRed
-      ? '0 0 12px rgba(255,59,59,0.4)'
-      : isCyan
-      ? '0 0 12px rgba(0,217,255,0.4)'
-      : 'none',
+  const getRingSize = () => {
+    if (hoverType) return 40;
+    return 24;
   };
-
-  if (isHover && !isRed && !isCyan) {
-    ringStyle.background = 'transparent';
-    ringStyle.border = '1px solid transparent';
-    ringStyle.backgroundImage =
-      'conic-gradient(from 0deg, #FF3B3B 0deg 180deg, #00D9FF 180deg 360deg)';
-    ringStyle.backgroundClip = 'border-box';
-    ringStyle.WebkitMask =
-      'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)';
-    ringStyle.WebkitMaskComposite = 'xor';
-    ringStyle.maskComposite = 'exclude';
-    ringStyle.padding = '1px';
-  }
 
   return (
-    <>
-      {/* Inner dot — splits on hover */}
-      <div ref={dotRef} style={dotStyle}>
-        {isHover ? (
-          <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            <div style={{
-              width: 6, height: 6, borderRadius: '50%',
-              background: isRed ? '#FF3B3B' : '#FF3B3B',
-              boxShadow: '0 0 6px #FF3B3B',
-            }} />
-            <div style={{
-              width: 6, height: 6, borderRadius: '50%',
-              background: isCyan ? '#00D9FF' : '#00D9FF',
-              boxShadow: '0 0 6px #00D9FF',
-            }} />
-          </div>
-        ) : (
-          <div style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: isRed ? '#FF3B3B' : isCyan ? '#00D9FF' : '#FFFFFF',
-            boxShadow: isRed
-              ? '0 0 8px #FF3B3B'
-              : isCyan
-              ? '0 0 8px #00D9FF'
-              : 'none',
-          }} />
-        )}
-      </div>
+    <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden" aria-hidden="true">
+      {/* Central Micro Dot */}
+      <div
+        ref={dotRef}
+        style={{
+          position: 'absolute',
+          top: -3,
+          left: -3,
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          backgroundColor: hoverType === 'amber' ? '#FFB65C' : '#59E1FF',
+          boxShadow: hoverType === 'amber' ? '0 0 8px #FFB65C' : '0 0 8px #59E1FF',
+          transition: 'background-color 0.2s ease',
+          willChange: 'transform',
+        }}
+      />
 
-      {/* Outer ring */}
-      <div ref={ringRef} style={ringStyle} />
-    </>
+      {/* Lagging Precision Reticle */}
+      <div
+        ref={ringRef}
+        style={{
+          position: 'absolute',
+          top: -getRingSize() / 2,
+          left: -getRingSize() / 2,
+          width: getRingSize(),
+          height: getRingSize(),
+          borderRadius: '50%',
+          border: `1px solid ${getRingColor()}`,
+          transition: 'width 0.2s ease, height 0.2s ease, border-color 0.2s ease, top 0.2s ease, left 0.2s ease',
+          willChange: 'transform',
+        }}
+      />
+    </div>
   );
 }

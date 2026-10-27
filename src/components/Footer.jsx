@@ -1,90 +1,112 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const NAV = [
-  { label: 'About',    to: '/#about'   },
+const NAV_LINKS = [
+  { label: 'Overview', to: '/' },
   { label: 'Projects', to: '/projects' },
   { label: 'Security', to: '/security' },
   { label: 'Creative', to: '/creative' },
-  { label: 'Contact',  to: '/contact'  },
+  { label: 'Videos', to: '/videos' },
+  { label: 'Blog', to: '/blog' },
+  { label: 'Contact', to: '/contact' },
 ];
 
-const SOCIALS = [
-  { icon: 'LI', label: 'LinkedIn',  href: 'https://www.linkedin.com/in/gururaj-seethur' },
-  { icon: 'GH', label: 'GitHub',    href: 'https://github.com/gururajseethur' },
-  { icon: 'TH', label: 'THM',       href: 'https://tryhackme.com/p/Gururajseethur' },
-  { icon: '✉',  label: 'Email',     href: 'mailto:gururajseethur@gmail.com' },
+const EXTERNAL_CHANNELS = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/gururaj-seethur' },
+  { label: 'GitHub', href: 'https://github.com/gururajseethur' },
+  { label: 'TryHackMe', href: 'https://tryhackme.com/p/Gururajseethur' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@gururaj-seethur' },
+  { label: 'Email', href: 'mailto:gururajseethur@gmail.com' },
 ];
 
 export default function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <footer style={{
-      background: '#0E0E12',
-      borderTop: '1px solid #1C1C24',
-      padding: '48px max(48px, 5vw)',
-    }}>
+    <footer className="relative border-t border-border bg-void/90 py-16 px-6 md:px-12 z-10">
       <div className="max-w-content mx-auto">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 40, alignItems: 'start' }}>
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12 mb-12">
+          {/* Brand & Working Thesis (6 cols) */}
+          <div className="space-y-4 md:col-span-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-7 w-7 items-center justify-center rounded border border-border bg-surface font-display text-xs font-bold text-cyan">
+                GS
+              </div>
+              <span className="font-display text-lg font-bold text-text-primary">
+                Gururaj Seethuru
+              </span>
+            </div>
 
-          {/* Left: Brand */}
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: '#FFFFFF' }}>
-              Gururaj.
-            </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#555', marginTop: 8, lineHeight: 1.6 }}>
-              Filmmaker · Ethical Hacker · Bengaluru
-            </div>
+            <p className="font-sans text-xs md:text-sm text-text-muted leading-relaxed max-w-md">
+              Cybersecurity engineering, local-first sovereign AI systems, and narrative filmmaking.
+              Building the plumbing for verifiable digital intelligence.
+            </p>
+
+            <blockquote className="rounded-lg border-l-2 border-cyan bg-surface/40 p-3 font-mono text-[11px] text-text-secondary leading-relaxed max-w-md">
+              "Every team that handles sensitive data will want to run its own LLM stack with its own telemetry. Most of what I ship is some piece of that plumbing."
+            </blockquote>
           </div>
 
-          {/* Center: Nav */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
-            {NAV.map(n => (
-              <Link
-                key={n.label}
-                to={n.to}
-                style={{
-                  fontFamily: 'var(--font-sans)', fontSize: 14, color: '#555',
-                  textDecoration: 'none', transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => e.target.style.color = '#FFFFFF'}
-                onMouseLeave={e => e.target.style.color = '#555'}
-              >
-                {n.label}
-              </Link>
-            ))}
+          {/* Quick Links (3 cols) */}
+          <div className="md:col-span-3">
+            <div className="font-mono text-xs uppercase tracking-wider text-cyan mb-4">
+              SYSTEM NAVIGATION
+            </div>
+            <ul className="space-y-2 font-mono text-xs">
+              {NAV_LINKS.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-text-muted hover:text-cyan transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Right: Socials */}
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-            {SOCIALS.map(s => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={s.label}
-                style={{
-                  width: 40, height: 40, borderRadius: '50%',
-                  border: '1px solid #1C1C24',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#555', textDecoration: 'none', fontSize: 13,
-                  fontFamily: 'var(--font-mono)', fontWeight: 500,
-                  transition: 'border-color 0.2s, color 0.2s',
-                }}
-                onMouseEnter={e => { const el = e.currentTarget; el.style.borderColor='#FFFFFF'; el.style.color='#FFFFFF'; }}
-                onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor='#1C1C24'; el.style.color='#555'; }}
-              >
-                {s.icon}
-              </a>
-            ))}
+          {/* External Signals (3 cols) */}
+          <div className="md:col-span-3">
+            <div className="font-mono text-xs uppercase tracking-wider text-cyan mb-4">
+              EXTERNAL SIGNALS
+            </div>
+            <ul className="space-y-2 font-mono text-xs">
+              {EXTERNAL_CHANNELS.map((ch) => (
+                <li key={ch.label}>
+                  <a
+                    href={ch.href}
+                    target={ch.href.startsWith('mailto:') ? '_self' : '_blank'}
+                    rel="noopener noreferrer"
+                    className="text-text-muted hover:text-white transition-colors flex items-center justify-between"
+                  >
+                    <span>{ch.label}</span>
+                    <span className="text-text-faint">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div style={{ borderTop: '1px solid #0E0E12', marginTop: 48, paddingTop: 24, textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#333', margin: 0 }}>
-            © 2025 Gururaj Seethuru. Designed &amp; Built by Gururaj.
-          </p>
+        {/* Bottom Bar */}
+        <div className="border-t border-border-subtle pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-text-muted">
+          <div>
+            © {new Date().getFullYear()} GURURAJ SEETHURU. ALL RIGHTS RESERVED.
+          </div>
+
+          <div className="flex items-center gap-6">
+            <span>BENGALURU // ASIA-SOUTH1</span>
+            <button
+              onClick={scrollToTop}
+              className="hover:text-cyan transition-colors flex items-center gap-1"
+            >
+              <span>RETURN TO APEX</span>
+              <span>↑</span>
+            </button>
+          </div>
         </div>
       </div>
     </footer>

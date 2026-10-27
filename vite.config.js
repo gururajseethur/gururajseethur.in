@@ -6,7 +6,17 @@ export default defineConfig({
   plugins: [react(), markdown()],
   server: {
     port: 3000,
-    open: true,
+    open: false,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          three: ['three'],
+          react: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
   },
   test: {
     environment: 'jsdom',

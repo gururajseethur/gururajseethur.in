@@ -2,19 +2,30 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import { useContentItem } from '../hooks/useContent';
+import useSEO from '../hooks/useSEO';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
   const post = useContentItem('blog', slug);
 
+  useSEO({
+    title: post ? post.attributes?.title : 'Post Not Found',
+    description: post ? post.attributes?.title : 'Engineering log article',
+  });
+
   if (!post) {
     return (
-      <div style={{ minHeight: '100vh', background: '#070709', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 max(32px, 5vw)' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 64, color: '#1C1C24', marginBottom: 16 }}>404</div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: '#FFFFFF', marginBottom: 16 }}>Post not found</h1>
-          <Link to='/blog' style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00D9FF', textDecoration: 'none' }}>
-            ← Back to Blog
+      <div className="min-h-[70vh] flex items-center justify-center px-6">
+        <div className="glass-panel p-12 text-center max-w-md">
+          <div className="font-mono text-4xl font-bold text-cobalt mb-3">404</div>
+          <h1 className="font-display text-xl font-bold text-text-primary mb-4">
+            Engineering Log Not Found
+          </h1>
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 font-mono text-xs text-cyan hover:underline"
+          >
+            ← Return to Engineering Logs
           </Link>
         </div>
       </div>
@@ -22,82 +33,69 @@ export default function BlogPostPage() {
   }
 
   const { attributes, body } = post;
+  const dateStr = attributes.date
+    ? new Date(attributes.date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : '';
 
   return (
-    <div style={{ minHeight: '100vh', background: '#070709', paddingTop: 96, paddingBottom: 96 }}>
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 max(32px, 4vw)' }}>
-
+    <div className="relative min-h-screen px-6 py-16 md:px-12">
+      <article className="max-w-3xl mx-auto">
+        {/* Back Link */}
         <Link
-          to='/blog'
-          style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.12em',
-            color: '#50505A', textDecoration: 'none', textTransform: 'uppercase',
-            display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 48,
-            transition: 'color 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
-          onMouseLeave={e => e.currentTarget.style.color = '#50505A'}
+          to="/blog"
+          className="inline-flex items-center gap-2 font-mono text-xs text-text-muted hover:text-cyan transition-colors mb-10"
         >
-          ← BLOG
+          <span>← BACK TO ENGINEERING LOGS</span>
         </Link>
 
+        {/* Post Header */}
+        <header className="mb-12 border-b border-border-subtle pb-8">
+          <div className="flex items-center gap-3 font-mono text-xs text-cyan mb-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+            <span>DISPATCH // {dateStr}</span>
+          </div>
+
+          <h1 className="font-display text-3xl md:text-5xl font-bold text-text-primary leading-tight">
+            {attributes.title}
+          </h1>
+
+          <div className="mt-4 flex items-center gap-4 font-mono text-xs text-text-muted">
+            <span>BY GURURAJ SEETHURU</span>
+            <span>·</span>
+            <span>CYBERSECURITY & AI INFRASTRUCTURE</span>
+          </div>
+        </header>
+
+        {/* Cover Image */}
         {attributes.cover_image && (
-          <img
-            src={attributes.cover_image}
-            alt={attributes.title}
-            style={{
-              width: '100%', height: 320, objectFit: 'cover',
-              borderRadius: 12, marginBottom: 40, opacity: 0.85,
-              border: '1px solid #1C1C24',
-            }}
-          />
+          <div className="mb-10 rounded-xl overflow-hidden border border-border">
+            <img
+              src={attributes.cover_image}
+              alt={attributes.title}
+              className="w-full h-auto object-cover"
+            />
+          </div>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div style={{ width: 32, height: 2, background: '#00D9FF' }} />
-          {attributes.date && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#50505A', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              {new Date(attributes.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </span>
-          )}
-          {attributes.tags?.length > 0 && attributes.tags.slice(0, 3).map(tag => (
-            <span key={tag} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em', padding: '2px 8px', borderRadius: 4, border: '1px solid #1C1C24', color: '#50505A' }}>
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <h1 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 800,
-          fontSize: 'clamp(28px, 5vw, 48px)', color: '#FFFFFF',
-          lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 40px',
-        }}>
-          {attributes.title}
-        </h1>
-
-        <div style={{ background: '#0E0E12', borderRadius: 12, border: '1px solid #1C1C24', padding: 'clamp(28px, 5vw, 48px)' }}>
+        {/* Markdown Body */}
+        <div className="glass-panel p-8 md:p-12 border-border/60">
           <MarkdownRenderer content={body} />
         </div>
 
-        <div style={{ marginTop: 48, paddingTop: 32, borderTop: '1px solid #1C1C24', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link
-            to='/blog'
-            style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#50505A', textDecoration: 'none', letterSpacing: '0.1em', transition: 'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
-            onMouseLeave={e => e.currentTarget.style.color = '#50505A'}
-          >
-            ← ALL POSTS
+        {/* Post Footer */}
+        <div className="mt-12 pt-8 border-t border-border-subtle flex items-center justify-between font-mono text-xs">
+          <Link to="/blog" className="text-cyan hover:underline">
+            ← Previous Logs
           </Link>
-          <Link
-            to='/contact'
-            style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', textDecoration: 'none', letterSpacing: '0.1em', transition: 'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
-            onMouseLeave={e => e.currentTarget.style.color = '#00D9FF'}
-          >
-            GET IN TOUCH →
+          <Link to="/contact" className="text-text-muted hover:text-white">
+            Discuss this Architecture →
           </Link>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

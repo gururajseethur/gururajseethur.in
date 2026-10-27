@@ -3,6 +3,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import CursorEffect from './CursorEffect';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import SignalEngineScene from './three/SignalEngineScene';
+import { SignalEngineProvider } from '../context/SignalEngineContext';
 
 export default function Layout() {
   const location = useLocation();
@@ -10,28 +12,36 @@ export default function Layout() {
 
   useEffect(() => {
     setOpacity(0);
-    const t = setTimeout(() => setOpacity(1), 50);
+    const t = setTimeout(() => setOpacity(1), 60);
     return () => clearTimeout(t);
   }, [location.pathname]);
 
   return (
-    <>
-      <CursorEffect />
-      <Navbar />
+    <SignalEngineProvider>
+      <div className="relative min-h-screen bg-void text-text-secondary selection:bg-cyan/20 selection:text-white">
+        {/* Persistent 3D WebGL Signal Engine Scene */}
+        <SignalEngineScene />
 
-      <main
-        style={{
-          opacity,
-          transition: 'opacity 200ms ease',
-          minHeight: '100vh',
-          background: '#070709',
-          color: '#B0B0C0',
-        }}
-      >
-        <Outlet />
-      </main>
+        {/* Custom Precision Cursor */}
+        <CursorEffect />
 
-      <Footer />
-    </>
+        {/* Global Navigation */}
+        <Navbar />
+
+        {/* Main Content Layer (Rendered in front of 3D Scene) */}
+        <main
+          className="relative z-10 min-h-screen pt-20"
+          style={{
+            opacity,
+            transition: 'opacity 240ms cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          <Outlet />
+        </main>
+
+        {/* Global Footer */}
+        <Footer />
+      </div>
+    </SignalEngineProvider>
   );
 }

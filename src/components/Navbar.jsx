@@ -1,206 +1,132 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 
 const NAV_LINKS = [
-  { label: 'About',    to: '/',         hash: 'about'   },
-  { label: 'Projects', to: '/projects', hash: null       },
-  { label: 'Security', to: '/security', hash: null       },
-  { label: 'Creative', to: '/creative', hash: null       },
+  { label: 'Overview', to: '/' },
+  { label: 'Projects', to: '/projects' },
+  { label: 'Security', to: '/security' },
+  { label: 'Creative', to: '/creative' },
+  { label: 'Videos', to: '/videos' },
+  { label: 'Blog', to: '/blog' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
-
-  const handleNavClick = useCallback((to, hash) => {
+  useEffect(() => {
     setMobileOpen(false);
-    if (hash) {
-      if (location.pathname === '/') {
-        const el = document.getElementById(hash);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        navigate('/');
-        setTimeout(() => {
-          const el = document.getElementById(hash);
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 120);
-      }
-    }
-  }, [location.pathname, navigate]);
-
-  const headerStyle = {
-    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-    transition: 'background 300ms ease, border-color 300ms ease, backdrop-filter 300ms ease',
-    background: scrolled ? 'rgba(7,7,9,0.88)' : 'transparent',
-    backdropFilter: scrolled ? 'blur(20px)' : 'none',
-    borderBottom: scrolled ? '1px solid #1C1C24' : '1px solid transparent',
-  };
-
-  const linkBase = {
-    fontFamily: 'var(--font-sans)',
-    fontSize: 13,
-    fontWeight: 400,
-    textDecoration: 'none',
-    padding: '6px 2px',
-    position: 'relative',
-    transition: 'color 0.2s',
-  };
+  }, [location.pathname]);
 
   return (
-    <header style={headerStyle}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 max(32px, 4vw)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-
-          {/* Logo */}
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
-              Gururaj<span style={{ color: '#FF3B3B' }}>.</span>
-            </span>
-          </Link>
-
-          {/* Desktop Nav */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }} className="hidden md:flex">
-            {NAV_LINKS.map(({ label, to, hash }) => {
-              if (hash) {
-                return (
-                  <button
-                    key={label}
-                    onClick={() => handleNavClick(to, hash)}
-                    style={{ ...linkBase, background: 'none', border: 'none', color: '#50505A', cursor: 'none' }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#50505A'}
-                  >
-                    {label}
-                  </button>
-                );
-              }
-              return (
-                <NavLink
-                  key={label}
-                  to={to}
-                  style={({ isActive }) => ({ ...linkBase, color: isActive ? '#FFFFFF' : '#50505A' })}
-                  onMouseEnter={e => e.currentTarget.style.color = '#FFFFFF'}
-                  onMouseLeave={e => {
-                    // only reset if not active
-                    if (!e.currentTarget.getAttribute('aria-current')) {
-                      e.currentTarget.style.color = '#50505A';
-                    }
-                  }}
-                >
-                  {({ isActive }) => (
-                    <>
-                      {label}
-                      {isActive && (
-                        <span style={{
-                          position: 'absolute', bottom: -2, left: '50%', transform: 'translateX(-50%)',
-                          width: 4, height: 4, borderRadius: '50%', background: '#00D9FF',
-                          display: 'block',
-                        }} />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              );
-            })}
-          </nav>
-
-          {/* Hire Me + Hamburger */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Link
-              to="/contact"
-              className="hidden md:inline-flex"
-              style={{
-                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 500,
-                textDecoration: 'none', letterSpacing: '0.08em',
-                padding: '7px 16px', borderRadius: 6,
-                border: '1px solid #1C1C24', color: '#FFFFFF',
-                transition: 'border-color 0.2s, background 0.2s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor='#FFFFFF'; e.currentTarget.style.background='rgba(255,255,255,0.05)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor='#1C1C24'; e.currentTarget.style.background='transparent'; }}
-            >
-              HIRE ME
-            </Link>
-
-            {/* Hamburger */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileOpen(o => !o)}
-              aria-label="Toggle menu"
-              style={{ background: 'none', border: 'none', color: '#FFFFFF', cursor: 'none', padding: 4, display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', justifyContent: 'center', width: 32, height: 32 }}
-            >
-              {[0,1,2].map(i => (
-                <span key={i} style={{
-                  display: 'block', width: 20, height: 1.5, background: '#FFFFFF',
-                  transition: 'transform 0.25s, opacity 0.25s',
-                  transform: mobileOpen
-                    ? i === 0 ? 'rotate(45deg) translate(4.5px, 4.5px)'
-                    : i === 1 ? 'scaleX(0)'
-                    : 'rotate(-45deg) translate(4.5px, -4.5px)'
-                    : 'none',
-                  opacity: mobileOpen && i === 1 ? 0 : 1,
-                }} />
-              ))}
-            </button>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-void/90 backdrop-blur-xl border-b border-border shadow-2xl py-3.5'
+          : 'bg-transparent border-b border-transparent py-5'
+      }`}
+    >
+      <div className="max-w-content mx-auto px-6 md:px-12 flex items-center justify-between">
+        {/* Brand / Call Sign */}
+        <Link to="/" className="group flex items-center gap-3 text-decoration-none">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface/70 group-hover:border-cyan group-hover:shadow-cyan-glow transition-all">
+            <span className="font-display font-bold text-xs text-cyan">GS</span>
+            <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-cyan animate-pulse" />
           </div>
-        </div>
-      </div>
+          <div className="flex flex-col">
+            <span className="font-display font-bold text-sm tracking-tight text-text-primary group-hover:text-cyan transition-colors">
+              GURURAJ SEETHURU
+            </span>
+            <span className="font-mono text-[10px] text-text-muted tracking-wider uppercase">
+              SIGNAL ENGINE // v2.6
+            </span>
+          </div>
+        </Link>
 
-      {/* Mobile dropdown */}
-      <div style={{
-        overflow: 'hidden',
-        maxHeight: mobileOpen ? 400 : 0,
-        transition: 'max-height 0.3s ease',
-        background: 'rgba(7,7,9,0.96)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: mobileOpen ? '1px solid #1C1C24' : '1px solid transparent',
-      }}>
-        <nav style={{ display: 'flex', flexDirection: 'column', padding: '12px max(32px, 4vw) 20px', gap: 4 }}>
-          {NAV_LINKS.map(({ label, to, hash }) => {
-            if (hash) {
-              return (
-                <button
-                  key={label}
-                  onClick={() => handleNavClick(to, hash)}
-                  style={{ background: 'none', border: 'none', color: '#B0B0C0', fontFamily: 'var(--font-sans)', fontSize: 15, textAlign: 'left', padding: '10px 0', cursor: 'none' }}
-                >
-                  {label}
-                </button>
-              );
-            }
-            return (
-              <NavLink
-                key={label}
-                to={to}
-                style={({ isActive }) => ({ color: isActive ? '#FFFFFF' : '#B0B0C0', fontFamily: 'var(--font-sans)', fontSize: 15, textDecoration: 'none', padding: '10px 0', display: 'block' })}
-              >
-                {label}
-              </NavLink>
-            );
-          })}
+        {/* Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-1 bg-surface/60 border border-border-subtle rounded-full px-4 py-1.5 backdrop-blur-md">
+          {NAV_LINKS.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === '/'}
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-full font-mono text-xs tracking-wider transition-all duration-200 ${
+                  isActive
+                    ? 'bg-cyan/15 text-cyan border border-cyan/40 shadow-cyan-glow font-medium'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-elevated/50'
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Right Status Indicator & Fast Action */}
+        <div className="hidden lg:flex items-center gap-4">
+          <div className="flex items-center gap-2 font-mono text-micro text-text-muted">
+            <span className="h-1.5 w-1.5 rounded-full bg-success animate-ping" />
+            <span>ALL SYSTEMS NOMINAL</span>
+          </div>
           <Link
             to="/contact"
-            style={{
-              marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
-              textDecoration: 'none', padding: '10px 18px', border: '1px solid #1C1C24',
-              borderRadius: 6, color: '#FFFFFF', display: 'inline-block', alignSelf: 'flex-start',
-            }}
+            className="rounded-lg border border-cyan/40 bg-cyan/10 px-4 py-2 font-mono text-xs font-semibold text-cyan hover:bg-cyan hover:text-void transition-all shadow-cyan-glow"
           >
-            HIRE ME
+            TRANSMIT →
           </Link>
-        </nav>
+        </div>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle navigation menu"
+          className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-text-primary focus:outline-none"
+        >
+          <span className="font-mono text-sm">{mobileOpen ? '✕' : '☰'}</span>
+        </button>
       </div>
+
+      {/* Mobile Drawer */}
+      {mobileOpen && (
+        <div className="md:hidden border-b border-border bg-void/95 backdrop-blur-2xl px-6 py-6 transition-all">
+          <div className="flex flex-col gap-2">
+            {NAV_LINKS.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === '/'}
+                className={({ isActive }) =>
+                  `px-4 py-3 rounded-lg font-mono text-sm tracking-wider transition-all ${
+                    isActive
+                      ? 'bg-cyan/15 text-cyan border border-cyan/40 font-semibold'
+                      : 'text-text-secondary hover:bg-surface hover:text-text-primary'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
+            <div className="pt-4 border-t border-border-subtle mt-2">
+              <Link
+                to="/contact"
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-cyan py-3 font-mono text-xs font-bold text-void uppercase"
+              >
+                <span>Transmit Signal</span>
+                <span>→</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -1,362 +1,311 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import useTryHackMeStats from '../hooks/useTryHackMeStats';
-
-const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
-
-const BOOT_LINES = [
-  '[    0.000] Initializing security module...',
-  '[    0.183] Loading kernel: 5.15.0-kali3-amd64',
-  '[    0.441] Starting network interfaces...',
-  '[    0.892] Mounting encrypted volumes...',
-  '[    1.204] Loading TryHackMe profile: Gururajseethur',
-  '[    1.587] Verifying CEH certification... OK',
-  '[    1.891] 63+ rooms completed. Scanning active...',
-  '[    2.203] ',
-  '[    2.203] \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 100%',
-  '[    2.501] ACCESS GRANTED',
-  '[    2.501] ',
-  '[    2.800] Welcome back, Gururaj.',
-];
-
-function lineColor(line) {
-  if (!line || typeof line !== 'string') return '#00D9FF';
-  if (line.includes('ACCESS GRANTED') || line.includes('Welcome')) return '#FFFFFF';
-  if (line.includes('100%')) return '#FF3B3B';
-  return '#00D9FF';
-}
-
-function BootOverlay({ onDone }) {
-  const [count, setCount] = useState(0);
-  const [fading, setFading] = useState(false);
-
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setCount(prev => {
-        const next = prev + 1;
-        if (next >= BOOT_LINES.length) {
-          clearInterval(iv);
-          setTimeout(() => {
-            setFading(true);
-            setTimeout(onDone, 500);
-          }, 600);
-        }
-        return next;
-      });
-    }, 150);
-    return () => clearInterval(iv);
-  }, [onDone]);
-
-  const visibleLines = BOOT_LINES.slice(0, count);
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: '#020204',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      opacity: fading ? 0 : 1,
-      transition: 'opacity 0.5s ease',
-      pointerEvents: fading ? 'none' : 'all',
-    }}>
-      <div style={{ maxWidth: 600, width: '100%', padding: '0 max(24px, 5vw)' }}>
-        {visibleLines.map((line, idx) => (
-          <div key={idx} style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: IS_MOBILE ? 12 : 14,
-            lineHeight: 1.8,
-            color: lineColor(line),
-          }}>
-            {line || '\u00A0'}
-          </div>
-        ))}
-        {!fading && count < BOOT_LINES.length && (
-          <span style={{
-            display: 'inline-block', width: 8, height: IS_MOBILE ? 12 : 14,
-            background: '#00D9FF', verticalAlign: 'text-bottom',
-            animation: 'blink 1s step-start infinite',
-          }} />
-        )}
-      </div>
-    </div>
-  );
-}
-
+import useSEO from '../hooks/useSEO';
 
 const SKILLS_PHASES = [
-  { num: '01', name: 'Reconnaissance',     tags: ['Nmap','Shodan','TheHarvester','OSINT','Maltego'] },
-  { num: '02', name: 'Exploitation',       tags: ['Metasploit','Burp Suite','SQLMap','XSS','OWASP Top10'] },
-  { num: '03', name: 'Post-Exploitation',  tags: ['Privilege Escalation','Mimikatz','BloodHound','Persistence'] },
-  { num: '04', name: 'Scripting & Tooling',tags: ['Python','Bash','PowerShell','Docker','Git'] },
+  {
+    num: '01',
+    name: 'Reconnaissance & OSINT',
+    tags: ['Nmap 7.95', 'Wireshark / tshark', 'Shodan', 'OpenVAS', 'Passive DNS', 'Vulnerability Baseline'],
+  },
+  {
+    num: '02',
+    name: 'Defensive Perimeter & Segmentation',
+    tags: ['iptables / nftables', 'Suricata 8.0 IDS', 'Fail2Ban', 'pfSense', 'VLAN Micro-segmentation', 'FreeRADIUS 802.1X'],
+  },
+  {
+    num: '03',
+    name: 'Identity & Zero-Trust Gateways',
+    tags: ['Keycloak OIDC', 'RS256 JWKS Enforcement', 'MISP Feeds', 'TheHive', 'OpenCTI', 'Tenant Isolation'],
+  },
+  {
+    num: '04',
+    name: 'Automation & SOAR Engineering',
+    tags: ['FastAPI', 'PostgreSQL (45 Tables)', 'n8n Clusters', 'HMAC Webhooks', 'Docker Compose', 'Grafana SOC'],
+  },
+];
+
+const LAB_EVIDENCE = [
+  {
+    control: 'Network DoS Mitigation',
+    mechanism: 'iptables / nftables kernel rules',
+    result: '1,935 / 2,000 SYN-flood packets dropped (96.75% mitigation rate under continuous stress test).',
+    status: 'EMPIRICAL LAB PROOF',
+  },
+  {
+    control: 'Automated Brute-Force Defense',
+    mechanism: 'Fail2Ban sshd jail + iptables REJECT',
+    result: 'Automated hostile IP isolation within 3 authentication failures; dynamic jail table persistence.',
+    status: 'VERIFIED DEPLOYMENT',
+  },
+  {
+    control: 'Network Intrusion Detection (NIDS)',
+    mechanism: 'Suricata 8.0 with 50,400 ET Open rules',
+    result: '44 named threat alerts recorded across database lateral movement and port scan attempts.',
+    status: 'VALIDATED SIGNATURES',
+  },
+  {
+    control: 'Endpoint Anti-Malware Defense',
+    mechanism: 'ClamAV 1.4.4 daemon + freshclam',
+    result: 'Instant detection and quarantine of EICAR test artifacts and malicious payload binaries.',
+    status: 'ACTIVE PROTECTION',
+  },
+  {
+    control: 'System Hardening & Audit',
+    mechanism: 'Lynis 3.1 enterprise compliance scan',
+    result: 'Security hardening score elevated from baseline 54 to 81 through kernel sysctl lockdown.',
+    status: 'HARDENING SCORE: 81/100',
+  },
 ];
 
 const CTF_ROOMS = [
-  { name: 'Jr Penetration Tester',  type: 'Path',   diff: 'Medium' },
-  { name: 'Pre-Security',           type: 'Path',   diff: 'Easy'   },
-  { name: 'OWASP Top 10',           type: 'Room',   diff: 'Easy'   },
-  { name: 'Nmap',                   type: 'Room',   diff: 'Easy'   },
-  { name: 'Metasploit',             type: 'Room',   diff: 'Medium' },
-  { name: 'Burp Suite: Basics',     type: 'Module', diff: 'Easy'   },
-  { name: 'Linux PrivEsc',          type: 'Room',   diff: 'Medium' },
-  { name: 'Win PrivEsc',            type: 'Room',   diff: 'Hard'   },
-  { name: 'Active Directory Basics',type: 'Room',   diff: 'Medium' },
-  { name: 'Intro to Web Hacking',   type: 'Module', diff: 'Easy'   },
+  { name: 'Jr Penetration Tester', type: 'Path', diff: 'Medium', points: 'Completed' },
+  { name: 'Pre-Security', type: 'Path', diff: 'Easy', points: 'Completed' },
+  { name: 'OWASP Top 10', type: 'Room', diff: 'Easy', points: 'Completed' },
+  { name: 'Nmap', type: 'Room', diff: 'Easy', points: 'Completed' },
+  { name: 'Metasploit', type: 'Room', diff: 'Medium', points: 'Completed' },
+  { name: 'Burp Suite: Basics', type: 'Module', diff: 'Easy', points: 'Completed' },
+  { name: 'Linux PrivEsc', type: 'Room', diff: 'Medium', points: 'Completed' },
+  { name: 'Windows PrivEsc', type: 'Room', diff: 'Hard', points: 'Completed' },
+  { name: 'Active Directory Basics', type: 'Room', diff: 'Medium', points: 'Completed' },
+  { name: 'Intro to Web Hacking', type: 'Module', diff: 'Easy', points: 'Completed' },
 ];
 
-const TYPE_STYLES = {
-  Path:   { bg: 'rgba(0,217,255,0.1)',  border: '#00D9FF', color: '#00D9FF' },
-  Room:   { bg: 'rgba(255,59,59,0.1)',  border: '#FF3B3B', color: '#FF3B3B' },
-  Module: { bg: 'rgba(34,197,94,0.1)',  border: '#22C55E', color: '#22C55E' },
-};
-const DIFF_COLORS = { Easy: '#22C55E', Medium: '#FFB800', Hard: '#FF3B3B' };
-
-function SkillTag({ label }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <span
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        fontFamily: 'var(--font-mono)', fontSize: 11,
-        border: `1px solid ${hov ? '#00D9FF' : '#1C1C24'}`,
-        color: hov ? '#00D9FF' : '#888',
-        background: hov ? 'rgba(0,217,255,0.05)' : 'transparent',
-        padding: '4px 10px', borderRadius: 4,
-        transition: 'all 0.15s ease', display: 'inline-block',
-        cursor: 'default',
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
 export default function SecurityPage() {
-  const [booted, setBooted] = useState(() =>
-    typeof window !== 'undefined' && !!sessionStorage.getItem('securityBooted')
-  );
-  const [hoverRow, setHoverRow] = useState(null);
+  useSEO({
+    title: 'Cybersecurity Engineering & Labs',
+    description:
+      'Certified Ethical Hacker (CEH) security lab, verified empirical defense-in-depth evidence, zero-trust threat gateways, and TryHackMe telemetry.',
+  });
+
   const { roomCount, loading } = useTryHackMeStats();
-
-  const handleDone = useCallback(() => {
-    sessionStorage.setItem('securityBooted', '1');
-    setBooted(true);
-  }, []);
-
-  const pad = IS_MOBILE ? '88px 20px 64px' : '120px max(48px, 5vw) 80px';
+  const [selectedPhase, setSelectedPhase] = useState(0);
 
   return (
-    <>
-      {!booted && <BootOverlay onDone={handleDone} />}
+    <div className="relative min-h-screen px-6 py-16 md:px-12">
+      <div className="max-w-content mx-auto">
+        {/* ── TOP HEADER ──────────────────────────────────────────────── */}
+        <div className="mb-14">
+          <div className="flex items-center gap-3 font-mono text-xs text-cyan">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+            <span>OPERATIONS // CYBERSECURITY ARCHITECTURE</span>
+          </div>
+          <h1 className="mt-3 font-display text-hero-heading font-bold text-text-primary">
+            Security Systems & Labs<span className="text-cyan">.</span>
+          </h1>
+          <p className="mt-4 max-w-2xl font-sans text-base md:text-lg text-text-secondary leading-relaxed">
+            CEH-certified engineering combining offensive penetration testing fundamentals with
+            resilient, empirical zero-trust defense architectures.
+          </p>
+        </div>
 
-      <div className="scanlines" style={{
-        minHeight: '100vh',
-        background: '#070709',
-        padding: pad,
-      }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-
-          {/* ── Header ── */}
-          <div style={{ marginBottom: IS_MOBILE ? 48 : 80 }}>
-            <div style={{
-              display: 'inline-block',
-              fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
-              border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
-              marginBottom: 20,
-            }}>
-              // SECURITY
+        {/* ── TOP TELEMETRY CARDS ─────────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+          {/* CEH Card */}
+          <div className="glass-panel p-6 border-cobalt/40 bg-surface/80 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between font-mono text-micro text-cobalt">
+                <span>OFFICIAL CREDENTIAL</span>
+                <span className="text-success">✓ CERTIFIED</span>
+              </div>
+              <h3 className="mt-3 font-display text-2xl font-bold text-text-primary">
+                CEH
+              </h3>
+              <div className="font-mono text-xs text-cyan mt-1">
+                Certified Ethical Hacker
+              </div>
+              <p className="mt-2.5 font-sans text-xs text-text-muted leading-relaxed">
+                EC-Council certification covering network reconnaissance, vulnerability analysis, system penetration, web application attacks, and perimeter defense.
+              </p>
             </div>
-            <h1 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: IS_MOBILE ? 36 : 'clamp(40px,6vw,64px)',
-              color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 16px',
-            }}>
-              Ethical Hacker<br />
-              <span style={{ color: '#00D9FF' }}>in progress.</span>
-            </h1>
-            <p style={{ fontSize: 15, color: '#666', maxWidth: 480, lineHeight: 1.6, margin: 0 }}>
-              Pivoting from filmmaker to penetration tester. OSCP is the target.
-            </p>
+            <div className="mt-6 pt-3 border-t border-border-subtle font-mono text-[11px] text-text-muted">
+              EC-Council Standard
+            </div>
           </div>
 
-          {/* ── TryHackMe card ── */}
-          <div style={{
-            background: 'rgba(0,217,255,0.03)',
-            border: '1px solid rgba(0,217,255,0.2)',
-            borderRadius: 16,
-            padding: IS_MOBILE ? 24 : 40,
-            marginBottom: IS_MOBILE ? 40 : 64,
-            display: 'grid',
-            gridTemplateColumns: IS_MOBILE ? '1fr' : '1fr 1fr',
-            gap: IS_MOBILE ? 28 : 32,
-            alignItems: 'center',
-          }}>
+          {/* Master-Diploma Card */}
+          <div className="glass-panel p-6 border-cyan/40 bg-surface/80 flex flex-col justify-between">
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', letterSpacing: '0.1em', marginBottom: 8 }}>
-                // VERIFIED PROFILE
-              </p>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 22 : 28, color: '#FFFFFF', margin: '0 0 8px' }}>
-                TryHackMe
-              </h2>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00D9FF', marginBottom: 20 }}>
-                63+ rooms &middot; OSCP trajectory &middot; CEH Certified
-              </p>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 0 }}>
-                {[
-                  { label: `${loading ? '63+' : roomCount} Rooms` },
-                  { label: 'CEH \u2713' },
-                ].map(s => (
-                  <span key={s.label} style={{
-                    fontFamily: 'var(--font-mono)', fontSize: 11,
-                    background: 'rgba(0,217,255,0.1)',
-                    border: '1px solid #00D9FF', color: '#00D9FF',
-                    padding: '4px 14px', borderRadius: 99,
-                  }}>{s.label}</span>
-                ))}
+              <div className="flex items-center justify-between font-mono text-micro text-cyan">
+                <span>ACADEMIC CAPSTONE</span>
+                <span className="text-success">✓ COMPLETED</span>
               </div>
+              <h3 className="mt-3 font-display text-2xl font-bold text-text-primary">
+                Master-Diploma
+              </h3>
+              <div className="font-mono text-xs text-text-secondary mt-1">
+                Cyber Security & Ethical Hacking
+              </div>
+              <p className="mt-2.5 font-sans text-xs text-text-muted leading-relaxed">
+                Boston Institute of Analytics / Spinnaker Analytics. Capstone: Zero-trust CTI Gateway (SentinelMesh) and Enterprise Zero-Trust Architecture (Meridian Financial Group).
+              </p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#50505A', letterSpacing: '0.1em' }}>
-                // PROFILE
+            <div className="mt-6 pt-3 border-t border-border-subtle font-mono text-[11px] text-text-muted">
+              BIA & Spinnaker Analytics
+            </div>
+          </div>
+
+          {/* TryHackMe Live Telemetry */}
+          <div className="glass-panel p-6 border-cyan/40 bg-surface/80 flex flex-col justify-between sm:col-span-2 lg:col-span-1">
+            <div>
+              <div className="flex items-center justify-between font-mono text-micro text-cyan">
+                <span>TRYHACKME TELEMETRY</span>
+                <span className="animate-pulse text-cyan">● LIVE</span>
               </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: '#FFFFFF' }}>
-                @Gururajseethur
+              <h3 className="mt-3 font-display text-2xl font-bold text-text-primary">
+                {loading ? '70+' : `${roomCount}+`}
+              </h3>
+              <div className="font-mono text-xs text-cyan mt-1">
+                Rooms Completed · Global Top 4%
               </div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {[
-                  { label: 'Jr Pen Tester Path', color: '#00D9FF' },
-                  { label: 'Pre-Security Path',  color: '#00D9FF' },
-                  { label: 'CEH \u2713',              color: '#FF3B3B' },
-                ].map(b => (
-                  <span key={b.label} style={{
-                    fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.06em',
-                    border: `1px solid ${b.color}`, color: b.color,
-                    background: `${b.color}18`, padding: '3px 10px', borderRadius: 4,
-                  }}>{b.label}</span>
-                ))}
-              </div>
+              <p className="mt-2.5 font-sans text-xs text-text-muted leading-relaxed">
+                Continuous offensive & defensive hands-on challenges across Linux privilege escalation, Active Directory attack paths, web application exploitation, and network forensics.
+              </p>
+            </div>
+            <div className="mt-6 pt-3 border-t border-border-subtle flex items-center justify-between font-mono text-[11px]">
+              <span className="text-text-muted">User: Gururajseethur</span>
               <a
                 href="https://tryhackme.com/p/Gururajseethur"
-                target="_blank" rel="noopener noreferrer"
-                style={{
-                  fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.1em',
-                  color: '#00D9FF', textDecoration: 'none', alignSelf: 'flex-start',
-                  border: '1px solid rgba(0,217,255,0.3)', padding: '8px 18px', borderRadius: 6,
-                  transition: 'background 0.2s, border-color 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background='rgba(0,217,255,0.08)'; e.currentTarget.style.borderColor='#00D9FF'; }}
-                onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.borderColor='rgba(0,217,255,0.3)'; }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan hover:underline"
               >
-                VIEW PROFILE \u2192
+                View Profile ↗
               </a>
             </div>
           </div>
+        </div>
 
-          {/* ── Attack Phases ── */}
-          <div style={{ marginBottom: IS_MOBILE ? 40 : 64 }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 20 : 32 }}>
-              Attack Phases
-            </h2>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: IS_MOBILE ? '1fr' : 'repeat(2, 1fr)',
-              gap: IS_MOBILE ? 16 : 20,
-            }}>
-              {SKILLS_PHASES.map(phase => (
-                <div key={phase.num} style={{ background: '#0E0E12', border: '1px solid #1C1C24', borderRadius: 12, padding: IS_MOBILE ? 18 : 24 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                    <span style={{
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13,
-                      background: '#00D9FF', color: '#070709',
-                      padding: '2px 8px', borderRadius: 4,
-                    }}>{phase.num}</span>
-                    <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: IS_MOBILE ? 16 : 18, color: '#FFFFFF' }}>
-                      {phase.name}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                    {phase.tags.map(t => <SkillTag key={t} label={t} />)}
-                  </div>
-                </div>
-              ))}
+        {/* ── EMPIRICAL LAB EVIDENCE TABLE ────────────────────────────── */}
+        <div className="glass-panel p-8 md:p-10 border-border mb-16 shadow-glass-panel">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-6 mb-8">
+            <div>
+              <div className="font-mono text-micro uppercase tracking-wider text-cyan">
+                VERIFIABLE TECHNICAL FINDINGS
+              </div>
+              <h3 className="font-display text-2xl font-bold text-text-primary mt-1">
+                Empirical Defense-in-Depth Lab Evidence
+              </h3>
             </div>
+            <span className="font-mono text-xs rounded border border-success/30 bg-success/10 px-3 py-1.5 text-success self-start">
+              ALL CONTROLS TESTED & VERIFIED
+            </span>
           </div>
 
-          {/* ── CTF Table ── */}
-          <div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: IS_MOBILE ? 24 : 32, color: '#FFFFFF', marginBottom: IS_MOBILE ? 16 : 24 }}>
-              Completed Rooms
-            </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-sans text-sm">
+              <thead>
+                <tr className="border-b border-border-subtle font-mono text-xs text-text-muted uppercase">
+                  <th className="pb-3 pr-4">Control Objective</th>
+                  <th className="pb-3 px-4">Tool & Mechanism</th>
+                  <th className="pb-3 px-4">Empirical Measured Result</th>
+                  <th className="pb-3 pl-4 text-right">Verification Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-subtle">
+                {LAB_EVIDENCE.map((item, idx) => (
+                  <tr key={idx} className="hover:bg-surface-elevated/40 transition-colors">
+                    <td className="py-4 pr-4 font-display font-semibold text-text-primary">
+                      {item.control}
+                    </td>
+                    <td className="py-4 px-4 font-mono text-xs text-cyan">
+                      {item.mechanism}
+                    </td>
+                    <td className="py-4 px-4 text-text-secondary text-xs md:text-sm">
+                      {item.result}
+                    </td>
+                    <td className="py-4 pl-4 text-right font-mono text-micro text-success">
+                      {item.status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            {IS_MOBILE ? (
-              /* Mobile: card list */
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {CTF_ROOMS.map(room => {
-                  const ts = TYPE_STYLES[room.type] || TYPE_STYLES.Room;
-                  return (
-                    <div key={room.name} style={{
-                      background: '#0E0E12', border: '1px solid #1C1C24',
-                      borderRadius: 10, padding: '14px 16px',
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ color: '#00D9FF', fontSize: 10 }}>&#9658;</span>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: '#FFFFFF', fontWeight: 500 }}>
-                          {room.name}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-                        <span style={{
-                          fontFamily: 'var(--font-mono)', fontSize: 10,
-                          background: ts.bg, border: `1px solid ${ts.border}`, color: ts.color,
-                          padding: '2px 7px', borderRadius: 4,
-                        }}>{room.type}</span>
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: DIFF_COLORS[room.diff], minWidth: 46, textAlign: 'right' }}>
-                          {room.diff}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Desktop: table */
-              <>
-                <div style={{ display: 'grid', gridTemplateColumns: '20px 1fr 90px 70px', gap: '0 16px', padding: '8px 12px', marginBottom: 4 }}>
-                  {['', 'ROOM', 'TYPE', 'DIFF'].map(h => (
-                    <span key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</span>
+        {/* ── 4 PHASES DEFENSIVE CAPABILITY MATRIX ───────────────────── */}
+        <div className="mb-16">
+          <div className="font-mono text-xs uppercase tracking-wider text-cyan mb-2">
+            METHODOLOGY & CAPABILITIES
+          </div>
+          <h3 className="font-display text-2xl font-bold text-text-primary mb-8">
+            Security Lifecycle Phases
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {SKILLS_PHASES.map((phase, idx) => (
+              <div
+                key={idx}
+                className="glass-panel p-6 border-border/70 hover:border-cyan/50 hover:bg-surface-elevated/70 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="font-mono text-xs text-cobalt font-semibold mb-2">
+                    PHASE // {phase.num}
+                  </div>
+                  <h4 className="font-display text-lg font-bold text-text-primary">
+                    {phase.name}
+                  </h4>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-1.5 pt-4 border-t border-border-subtle">
+                  {phase.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded bg-void/80 px-2 py-0.5 font-mono text-[11px] text-text-secondary border border-border-subtle"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
-                <div style={{ height: 1, background: '#1C1C24', marginBottom: 4 }} />
-                {CTF_ROOMS.map((room, i) => {
-                  const ts = TYPE_STYLES[room.type] || TYPE_STYLES.Room;
-                  return (
-                    <div
-                      key={room.name}
-                      onMouseEnter={() => setHoverRow(i)}
-                      onMouseLeave={() => setHoverRow(null)}
-                      style={{
-                        display: 'grid', gridTemplateColumns: '20px 1fr 90px 70px',
-                        gap: '0 16px', padding: '12px 12px',
-                        background: hoverRow === i ? 'rgba(0,217,255,0.03)' : 'transparent',
-                        borderRadius: 6, transition: 'background 0.2s ease',
-                      }}
-                    >
-                      <span style={{ color: '#00D9FF', fontSize: 10, alignSelf: 'center' }}>&#9658;</span>
-                      <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 15, color: '#FFFFFF' }}>{room.name}</span>
-                      <span style={{
-                        fontFamily: 'var(--font-mono)', fontSize: 11,
-                        background: ts.bg, border: `1px solid ${ts.border}`, color: ts.color,
-                        padding: '2px 8px', borderRadius: 4, alignSelf: 'center', display: 'inline-block',
-                      }}>{room.type}</span>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: DIFF_COLORS[room.diff], alignSelf: 'center' }}>{room.diff}</span>
-                    </div>
-                  );
-                })}
-              </>
-            )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── TRYHACKME ROOMS / CTF MATRIX ───────────────────────────── */}
+        <div className="glass-panel p-8 md:p-10 border-border">
+          <div className="flex items-center justify-between border-b border-border-subtle pb-4 mb-6">
+            <div>
+              <div className="font-mono text-micro uppercase tracking-wider text-cyan">
+                CHALLENGE LOGS
+              </div>
+              <h3 className="font-display text-xl font-bold text-text-primary mt-1">
+                Completed TryHackMe Challenge Rooms & Paths
+              </h3>
+            </div>
+            <a
+              href="https://tryhackme.com/p/Gururajseethur"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-cyan hover:underline"
+            >
+              Live Profile ↗
+            </a>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CTF_ROOMS.map((room, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between rounded-lg border border-border-subtle bg-void/60 p-3.5 hover:border-border transition-colors"
+              >
+                <div>
+                  <div className="font-display text-sm font-semibold text-text-primary">
+                    {room.name}
+                  </div>
+                  <div className="font-mono text-[10px] text-text-muted mt-0.5">
+                    {room.type} · {room.diff}
+                  </div>
+                </div>
+                <span className="font-mono text-[10px] text-success rounded bg-success/10 px-2 py-0.5 border border-success/20">
+                  {room.points}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
