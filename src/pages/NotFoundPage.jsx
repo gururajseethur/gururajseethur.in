@@ -1,67 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import useSEO from '../hooks/useSEO';
 
 export default function NotFoundPage() {
-  const [typed, setTyped] = useState('');
-  const fullText = `$ curl -I gururajseethur.in${typeof window !== 'undefined' ? window.location.pathname : '/???'}
-HTTP/1.1 404 Not Found
-X-Powered-By: curiosity
-X-Suggestion: try /`;
-
-  useEffect(() => {
-    let i = 0;
-    const iv = setInterval(() => {
-      setTyped(fullText.slice(0, i));
-      i++;
-      if (i > fullText.length) clearInterval(iv);
-    }, 18);
-    return () => clearInterval(iv);
-  }, []);
+  useSEO({
+    title: '404 - Signal Lost',
+    description: 'The requested node or route could not be resolved.',
+  });
 
   return (
-    <div style={{
-      minHeight: '100vh', background: '#070709',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '0 max(32px, 5vw)',
-    }}>
-      <div style={{ maxWidth: 480, textAlign: 'center' }}>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(80px, 15vw, 140px)',
-          background: 'linear-gradient(135deg, #FF3B3B 0%, #00D9FF 100%)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text', lineHeight: 1, marginBottom: 16,
-          letterSpacing: '-0.04em',
-        }}>
+    <div className="relative min-h-[80vh] flex items-center justify-center px-6 py-20">
+      <div className="glass-panel p-10 md:p-14 border-border max-w-lg text-center shadow-glass-panel">
+        <div className="font-mono text-xs uppercase tracking-widest text-cobalt mb-2">
+          ERROR // 404: ROUTE_UNRESOLVED
+        </div>
+
+        <div className="font-display text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cobalt via-cyan to-amber leading-none my-4">
           404
         </div>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: '#FFFFFF', marginBottom: 8 }}>
-          Page Not Found
+
+        <h1 className="font-display text-2xl font-bold text-text-primary mb-3">
+          Signal Path Terminated
         </h1>
-        <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: '#50505A', marginBottom: 32, lineHeight: 1.7 }}>
-          Unlike a CTF flag, this one&apos;s not hidden — it&apos;s just not here.
+
+        <p className="font-sans text-sm text-text-secondary leading-relaxed mb-8">
+          The requested address or network node does not exist in the Signal Engine index.
+          Recalibrate to return to nominal operations.
         </p>
 
-        <div style={{
-          background: '#0E0E12', border: '1px solid #1C1C24', borderRadius: 8,
-          padding: '20px 24px', marginBottom: 32, textAlign: 'left',
-        }}>
-          <pre style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#B0B0C0', margin: 0, lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-            {typed}<span style={{ animation: 'blink 1s step-end infinite', opacity: 1 }}>▊</span>
-          </pre>
+        <div className="rounded-lg border border-border-subtle bg-void/80 p-4 font-mono text-xs text-text-muted text-left mb-8 space-y-1">
+          <div>$ probe --route {typeof window !== 'undefined' ? window.location.pathname : '/unknown'}</div>
+          <div className="text-danger">[-] Host rejected: 404 NOT_FOUND</div>
+          <div className="text-cyan">[+] Fallback suggested: return to apex (/)</div>
         </div>
 
         <Link
           to="/"
-          style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
-            textDecoration: 'none', padding: '11px 28px', borderRadius: 6,
-            background: '#FF3B3B', color: '#FFFFFF', display: 'inline-block',
-            transition: 'opacity 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          className="inline-flex items-center gap-2 rounded-lg bg-cyan px-6 py-3 font-mono text-xs font-semibold uppercase text-void shadow-cyan-glow hover:brightness-110 transition-all"
         >
-          ← BACK TO HOME
+          <span>Re-anchor to Signal Engine Core</span>
+          <span>→</span>
         </Link>
       </div>
     </div>

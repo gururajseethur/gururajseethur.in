@@ -1,188 +1,228 @@
 import React, { useState } from 'react';
-import useScrollReveal from '../hooks/useScrollReveal';
+import useSEO from '../hooks/useSEO';
 
-const CONTACT_ITEMS = [
-  { icon: '✉', label: 'Email',      value: 'gururajseethur@gmail.com',               href: 'mailto:gururajseethur@gmail.com' },
-  { icon: '📞', label: 'Phone',      value: '+91 8762714344',                           href: 'tel:+918762714344' },
-  { icon: '💼', label: 'LinkedIn',   value: 'linkedin.com/in/gururaj-seethur',        href: 'https://www.linkedin.com/in/gururaj-seethur' },
-  { icon: '🔐', label: 'TryHackMe',  value: 'tryhackme.com/p/Gururajseethur',          href: 'https://tryhackme.com/p/Gururajseethur' },
+const DIRECT_SIGNALS = [
+  {
+    protocol: 'EMAIL',
+    value: 'gururajseethur@gmail.com',
+    href: 'mailto:gururajseethur@gmail.com',
+    detail: 'Direct inquiries, job opportunities, and technical collaborations.',
+  },
+  {
+    protocol: 'PHONE',
+    value: '+91 8762714344',
+    href: 'tel:+918762714344',
+    detail: 'Urgent security communications & leadership coordination.',
+  },
+  {
+    protocol: 'LINKEDIN',
+    value: 'linkedin.com/in/gururaj-seethur',
+    href: 'https://www.linkedin.com/in/gururaj-seethur',
+    detail: 'Professional network, verified experience, and recommendations.',
+  },
+  {
+    protocol: 'TRYHACKME',
+    value: 'tryhackme.com/p/Gururajseethur',
+    href: 'https://tryhackme.com/p/Gururajseethur',
+    detail: 'CTF challenge history, badge verification, and lab ranking.',
+  },
 ];
 
-function InputField({ label, name, type = 'text', placeholder, required }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-        {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        placeholder={placeholder}
-        required={required}
-        className="input-underline"
-      />
-    </div>
-  );
-}
-
 export default function ContactPage() {
-  const sectionRef = useScrollReveal();
+  useSEO({
+    title: 'Contact & Signal Transmission',
+    description:
+      'Establish direct communication with Gururaj Seethuru for cybersecurity, AI systems, and technical video collaborations.',
+  });
+
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSubmitting(true);
     const form = e.target;
     const data = new FormData(form);
+
     fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(data).toString(),
     })
-      .then(() => setSubmitted(true))
-      .catch(() => setSubmitted(true));
+      .then(() => {
+        setSubmitted(true);
+        setSubmitting(false);
+      })
+      .catch(() => {
+        setSubmitted(true);
+        setSubmitting(false);
+      });
   };
 
   return (
-    <div ref={sectionRef} style={{ minHeight: '100vh', padding: '120px max(48px, 5vw)' }}>
+    <div className="relative min-h-screen px-6 py-16 md:px-12">
       <div className="max-w-content mx-auto">
-
-        {/* Header */}
-        <div style={{ marginBottom: 72 }}>
-          <div data-reveal style={{
-            display: 'inline-block',
-            fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555',
-            border: '1px solid #1C1C24', padding: '4px 12px', borderRadius: 99,
-            marginBottom: 24,
-          }}>
-            // CONTACT
+        {/* ── HEADER ─────────────────────────────────────────────────── */}
+        <div className="mb-14">
+          <div className="flex items-center gap-3 font-mono text-xs text-cyan">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+            <span>TRANSMISSION // INITIATE COMMS</span>
           </div>
-          <h1 data-reveal data-delay="100" style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 'clamp(36px,5vw,52px)', color: '#FFFFFF',
-            letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 12px',
-          }}>
-            Let&apos;s Work Together.
+          <h1 className="mt-3 font-display text-hero-heading font-bold text-text-primary">
+            Transmission Hub<span className="text-cyan">.</span>
           </h1>
-          <p data-reveal data-delay="200" style={{ fontSize: 16, color: '#888', lineHeight: 1.6 }}>
-            Brand film or security assessment — let&apos;s talk.
+          <p className="mt-4 max-w-2xl font-sans text-base md:text-lg text-text-secondary leading-relaxed">
+            Direct communication channels for cybersecurity engineering roles, sovereign AI infrastructure design,
+            and high-impact creative video collaborations.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '55fr 45fr', gap: 80, alignItems: 'start' }}>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+          {/* ── DIRECT SIGNALS MATRIX (5 COLS) ─────────────────────────── */}
+          <div className="space-y-4 lg:col-span-5">
+            <div className="font-mono text-xs uppercase tracking-wider text-text-muted mb-2">
+              AUTHENTICATED SIGNAL PATHS
+            </div>
 
-          {/* Left: Form */}
-          <div data-reveal data-delay="100">
+            {DIRECT_SIGNALS.map((s) => (
+              <a
+                key={s.protocol}
+                href={s.href}
+                target={s.href.startsWith('mailto:') || s.href.startsWith('tel:') ? '_self' : '_blank'}
+                rel="noopener noreferrer"
+                className="glass-panel p-5 flex flex-col justify-between border-border-subtle hover:border-cyan hover:bg-surface-elevated/70 transition-all group block"
+              >
+                <div className="flex items-center justify-between font-mono text-xs">
+                  <span className="text-cyan font-semibold">{s.protocol}</span>
+                  <span className="text-text-faint group-hover:text-cyan group-hover:translate-x-1 transition-all">
+                    ↗
+                  </span>
+                </div>
+                <div className="mt-2 font-display text-base font-bold text-text-primary group-hover:text-white transition-colors">
+                  {s.value}
+                </div>
+                <div className="mt-1 font-sans text-xs text-text-muted">
+                  {s.detail}
+                </div>
+              </a>
+            ))}
+
+            <div className="rounded-xl border border-border-subtle bg-surface/50 p-5 font-mono text-xs text-text-muted mt-6">
+              <span className="text-cyan font-semibold">SECURITY NOTICE:</span> All communications handled with confidentiality. PGP encryption keys and signed verification hashes available upon request.
+            </div>
+          </div>
+
+          {/* ── NETLIFY FORM (7 COLS) ──────────────────────────────────── */}
+          <div className="glass-panel p-8 md:p-10 border border-border bg-surface/80 lg:col-span-7 shadow-glass-panel">
             {submitted ? (
-              <div style={{
-                padding: '48px', textAlign: 'center',
-                background: 'rgba(34,197,94,0.05)',
-                border: '1px solid rgba(34,197,94,0.2)',
-                borderRadius: 16,
-              }}>
-                <div style={{ fontSize: 32, marginBottom: 16 }}>✓</div>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, color: '#FFFFFF' }}>
-                  Message sent.
+              <div className="py-16 text-center">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-success/20 text-success font-mono text-xl mb-4">
+                  ✓
+                </div>
+                <h2 className="font-display text-2xl font-bold text-text-primary">
+                  Signal Queued for Delivery
+                </h2>
+                <p className="mt-3 font-sans text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
+                  Thank you for your transmission. Your message has been routed to Gururaj and will receive a response shortly.
                 </p>
-                <p style={{ color: '#666', marginTop: 8 }}>I'll get back to you shortly.</p>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="mt-6 rounded-lg border border-border bg-surface px-5 py-2.5 font-mono text-xs text-text-primary hover:border-cyan"
+                >
+                  Send Another Transmission
+                </button>
               </div>
             ) : (
               <form
                 name="contact"
                 method="POST"
                 data-netlify="true"
+                data-netlify-honeypot="bot-field"
                 onSubmit={handleSubmit}
-                style={{ display: 'flex', flexDirection: 'column', gap: 32 }}
+                className="space-y-6"
               >
                 <input type="hidden" name="form-name" value="contact" />
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
-                  <InputField label="Name" name="name" placeholder="Your name" required />
-                  <InputField label="Email" name="email" type="email" placeholder="your@email.com" required />
+                <div className="hidden">
+                  <label>
+                    Don’t fill this out if you're human: <input name="bot-field" />
+                  </label>
                 </div>
 
-                <InputField label="Subject" name="subject" placeholder="What's this about?" required />
+                <div className="border-b border-border-subtle pb-4">
+                  <span className="font-mono text-xs text-cyan uppercase tracking-wider">
+                    SECURE INQUIRY FORM
+                  </span>
+                  <div className="font-display text-lg font-bold text-text-primary mt-1">
+                    Send a Message or Project Specification
+                  </div>
+                </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                    Message
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label className="block font-mono text-xs text-text-muted uppercase mb-2">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="e.g. Alex Mercer"
+                      className="input-signal"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-mono text-xs text-text-muted uppercase mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="e.g. alex@company.com"
+                      className="input-signal"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-text-muted uppercase mb-2">
+                    Subject / Area of Interest
+                  </label>
+                  <select
+                    name="inquiry_type"
+                    className="input-signal cursor-pointer"
+                  >
+                    <option value="cybersecurity">Cybersecurity Engineering / SOC / Pentesting</option>
+                    <option value="ai-infrastructure">Local AI / Sovereign LLM Infrastructure</option>
+                    <option value="creative-video">Filmmaking / Commercial Video Direction</option>
+                    <option value="career-offer">Full-Time Career Opportunity</option>
+                    <option value="general">General Technical Inquiry</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-xs text-text-muted uppercase mb-2">
+                    Transmission Content *
                   </label>
                   <textarea
                     name="message"
-                    placeholder="Tell me about your project..."
                     required
-                    className="input-underline"
-                    style={{ minHeight: 140 }}
+                    rows={6}
+                    placeholder="Provide details on your project timeline, technical requirements, or opportunity..."
+                    className="input-signal"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  style={{
-                    background: '#FFFFFF', color: '#070709',
-                    fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 16,
-                    padding: 16, borderRadius: 8, border: 'none', width: '100%',
-                    transition: 'background 0.2s ease, transform 0.15s ease',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background='#E0E0E0'; e.currentTarget.style.transform='translateY(-1px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background='#FFFFFF'; e.currentTarget.style.transform='translateY(0)'; }}
+                  disabled={submitting}
+                  className="w-full inline-flex items-center justify-center gap-3 rounded-lg bg-gradient-to-r from-cobalt to-cyan px-6 py-4 font-mono text-xs font-semibold uppercase tracking-wider text-void shadow-cyan-glow hover:brightness-110 transition-all disabled:opacity-50"
                 >
-                  Send Message →
+                  <span>{submitting ? 'Transmitting...' : 'Dispatch Message →'}</span>
                 </button>
               </form>
             )}
-          </div>
-
-          {/* Right: Info */}
-          <div data-reveal data-delay="200">
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {CONTACT_ITEMS.map((item, i) => (
-                <div key={item.label}>
-                  {i > 0 && <div style={{ height: 1, background: '#0E0E12' }} />}
-                  <a
-                    href={item.href}
-                    target={item.href.startsWith('http') ? '_blank' : undefined}
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 16,
-                      padding: '20px 0', textDecoration: 'none',
-                      transition: 'color 0.2s ease',
-                      color: '#888',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.color='#FFFFFF'}
-                    onMouseLeave={e => e.currentTarget.style.color='#888'}
-                  >
-                    <span style={{ fontSize: 16, color: '#00D9FF', width: 20, textAlign: 'center' }}>{item.icon}</span>
-                    <div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#444', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>
-                        {item.label}
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-sans)', fontSize: 15 }}>{item.value}</div>
-                    </div>
-                  </a>
-                </div>
-              ))}
-            </div>
-
-            {/* Availability */}
-            <div style={{
-              marginTop: 32, padding: '20px 24px',
-              background: 'rgba(34,197,94,0.05)',
-              border: '1px solid rgba(34,197,94,0.2)',
-              borderRadius: 12,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <div style={{
-                  width: 8, height: 8, borderRadius: '50%', background: '#22C55E',
-                  animation: 'pulse-dot 2s ease-in-out infinite',
-                }} />
-                <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 16, color: '#22C55E' }}>
-                  Currently Available
-                </span>
-              </div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#555', lineHeight: 1.6, margin: 0 }}>
-                Open to brand films, security assessments, and freelance collaborations.
-              </p>
-            </div>
           </div>
         </div>
       </div>

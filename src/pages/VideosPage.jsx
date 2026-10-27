@@ -1,174 +1,170 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useContent } from '../hooks/useContent';
+import useSEO from '../hooks/useSEO';
 
 export default function VideosPage() {
-  const videos = useContent('videos');
-
-  const pill = (text, active = false) => ({
-    fontFamily: 'var(--font-mono)',
-    fontSize: 10,
-    letterSpacing: '0.08em',
-    padding: '3px 10px',
-    borderRadius: 4,
-    border: `1px solid ${active ? '#FF3B3B' : '#1C1C24'}`,
-    color: active ? '#FF3B3B' : '#50505A',
-    display: 'inline-block',
+  useSEO({
+    title: 'Video Archive & Walkthroughs',
+    description:
+      'Curated video portfolio: technical walkthroughs, commercial client edits, brand films, and motion graphics by Gururaj Seethuru.',
   });
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#070709', paddingTop: 96, paddingBottom: 80 }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 max(32px, 4vw)' }}>
+  const videos = useContent('videos');
+  const [activeEmbed, setActiveEmbed] = useState(null);
 
-        {/* Header */}
-        <div style={{ marginBottom: 64 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#50505A', letterSpacing: '0.12em', marginBottom: 16 }}>
-            // CREATIVE WORK / VIDEO
+  return (
+    <div className="relative min-h-screen px-6 py-16 md:px-12">
+      <div className="max-w-content mx-auto">
+        {/* ── HEADER ─────────────────────────────────────────────────── */}
+        <div className="mb-14">
+          <div className="flex items-center gap-3 font-mono text-xs text-amber">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber" />
+            <span>ARCHIVE // MOTION & TECHNICAL VIDEO VAULT</span>
           </div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(36px, 6vw, 64px)', color: '#FFFFFF', lineHeight: 1.05, letterSpacing: '-0.03em', margin: 0 }}>
-            Video<span style={{ color: '#FF3B3B' }}>.</span>
+          <h1 className="mt-3 font-display text-hero-heading font-bold text-text-primary">
+            Video Archive<span className="text-amber">.</span>
           </h1>
-          <p style={{ fontFamily: 'var(--font-sans)', color: '#50505A', maxWidth: 480, marginTop: 16, lineHeight: 1.7 }}>
-            Technical walkthroughs, client edits, and security explainers. Public samples + private portfolio workflow.
+          <p className="mt-4 max-w-2xl font-sans text-base md:text-lg text-text-secondary leading-relaxed">
+            Technical walkthroughs, commercial agency cuts, stakeholder brand films, and security explainers.
           </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 28, flexWrap: 'wrap' }}>
+          <div className="mt-6 flex flex-wrap gap-4">
             <a
-              href="/youtube"
+              href="https://www.youtube.com/@gururaj-seethur"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
-                textDecoration: 'none', padding: '10px 22px', borderRadius: 6,
-                background: '#FF3B3B', color: '#FFFFFF', display: 'inline-block',
-                transition: 'opacity 0.2s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              className="inline-flex items-center gap-2 rounded-lg bg-amber px-5 py-2.5 font-mono text-xs font-semibold uppercase text-void shadow-amber-glow hover:brightness-110 transition-all"
             >
-              YOUTUBE CHANNEL →
+              <span>Visit YouTube Channel</span>
+              <span>↗</span>
             </a>
             <a
-              href="mailto:gururajseethur@gmail.com?subject=Private%20Video%20Portfolio%20Request"
-              style={{
-                fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.08em',
-                textDecoration: 'none', padding: '10px 22px', borderRadius: 6,
-                border: '1px solid #1C1C24', color: '#FFFFFF', display: 'inline-block',
-                transition: 'border-color 0.2s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = '#FFFFFF'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = '#1C1C24'}
+              href="mailto:gururajseethur@gmail.com?subject=Private%20Video%20Portfolio%20Access%20Request"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-5 py-2.5 font-mono text-xs text-text-primary hover:border-cyan hover:text-cyan transition-colors"
             >
-              REQUEST PRIVATE REEL
+              <span>Request Private Client Reels</span>
+              <span>✉</span>
             </a>
           </div>
         </div>
 
-        {/* Empty state */}
-        {videos.length === 0 && (
-          <div style={{ border: '1px solid #1C1C24', borderRadius: 12, padding: 48, textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--font-sans)', color: '#50505A' }}>
-              No videos yet. Add them via the{' '}
-              <a href="/admin/" style={{ color: '#00D9FF', textDecoration: 'none' }}>/admin</a> panel.
-            </p>
-          </div>
-        )}
+        {/* ── VIDEO ITEMS LIST ────────────────────────────────────────── */}
+        <div className="space-y-8">
+          {(videos || []).map((video, idx) => {
+            const { attributes } = video;
+            const isEmbedOpen = activeEmbed === video.slug;
+            const hasEmbed = !!attributes.youtube_embed_link;
+            const isPrivate = attributes.access_type === 'private';
 
-        {/* Video grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(480px, 1fr))', gap: 24 }}>
-          {videos.map((video) => (
-            <div
-              key={video.slug}
-              style={{
-                border: '1px solid #1C1C24', borderRadius: 12,
-                background: '#0E0E12', overflow: 'hidden',
-                transition: 'border-color 0.25s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = '#FF3B3B'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = '#1C1C24'}
-            >
-              {/* Video embed or private */}
-              {video.attributes.access_type === 'private' ? (
-                <div style={{ paddingBottom: '56.25%', position: 'relative', background: '#0A0A0E' }}>
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ fontSize: 32 }}>🔒</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#FF3B3B', letterSpacing: '0.12em' }}>PRIVATE WORK SAMPLE</div>
-                    <p style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: '#50505A', maxWidth: 260, textAlign: 'center', lineHeight: 1.6 }}>
-                      {video.attributes.private_preview_note || 'Access shared on request for recruiters and collaborators.'}
+            return (
+              <div
+                key={video.slug || idx}
+                className="glass-panel p-6 md:p-8 border-border hover:border-amber/40 transition-all duration-300"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                  {/* Left Metadata (7 cols) */}
+                  <div className="space-y-4 lg:max-w-2xl">
+                    <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+                      <span className="text-amber font-semibold">
+                        VID // 0{idx + 1}
+                      </span>
+                      <span className="text-border">·</span>
+                      <span className="text-text-muted uppercase">
+                        {attributes.client_or_project || 'Commercial Work'}
+                      </span>
+                      <span
+                        className={`rounded px-2 py-0.5 text-[10px] uppercase font-semibold ${
+                          isPrivate
+                            ? 'bg-amber/15 text-amber border border-amber/30'
+                            : 'bg-success/15 text-success border border-success/30'
+                        }`}
+                      >
+                        {attributes.access_type || 'public'}
+                      </span>
+                    </div>
+
+                    <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary">
+                      {attributes.title}
+                    </h2>
+
+                    <p className="font-sans text-sm md:text-base text-text-secondary leading-relaxed">
+                      {attributes.description}
                     </p>
-                  </div>
-                </div>
-              ) : video.attributes.youtube_embed_link ? (
-                <div style={{ paddingBottom: '56.25%', position: 'relative' }}>
-                  <iframe
-                    src={video.attributes.youtube_embed_link}
-                    title={video.attributes.title}
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              ) : null}
 
-              {/* Card body */}
-              <div style={{ padding: '24px 28px 28px' }}>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
-                  <span style={pill(video.attributes.access_type, video.attributes.access_type === 'private')}>
-                    {video.attributes.access_type === 'private' ? 'PRIVATE' : 'PUBLIC'}
-                  </span>
-                  {video.attributes.client_or_project && (
-                    <span style={pill(video.attributes.client_or_project)}>
-                      {video.attributes.client_or_project}
-                    </span>
-                  )}
-                </div>
-
-                {video.attributes.date && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#333', marginBottom: 6, letterSpacing: '0.08em' }}>
-                    {new Date(video.attributes.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </div>
-                )}
-
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: '#FFFFFF', margin: '0 0 10px', lineHeight: 1.3 }}>
-                  {video.attributes.title}
-                </h2>
-                <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: '#50505A', lineHeight: 1.7, margin: 0 }}>
-                  {video.attributes.description}
-                </p>
-
-                {(video.attributes.role || video.attributes.outcome) && (
-                  <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    {video.attributes.role && (
-                      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: '#50505A', margin: 0 }}>
-                        <span style={{ color: '#B0B0C0' }}>Role:</span> {video.attributes.role}
-                      </p>
+                    {attributes.role && (
+                      <div className="font-mono text-xs text-text-muted">
+                        <span className="text-amber">ROLE:</span> {attributes.role}
+                      </div>
                     )}
-                    {video.attributes.outcome && (
-                      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: '#50505A', margin: 0 }}>
-                        <span style={{ color: '#B0B0C0' }}>Outcome:</span> {video.attributes.outcome}
-                      </p>
+
+                    {attributes.outcome && (
+                      <div className="rounded-lg border border-border-subtle bg-void/60 p-3.5 font-sans text-xs text-text-muted">
+                        <span className="text-text-primary font-semibold">Outcome: </span>
+                        {attributes.outcome}
+                      </div>
+                    )}
+
+                    {attributes.private_preview_note && (
+                      <div className="font-mono text-xs text-amber/90 italic">
+                        Notice: {attributes.private_preview_note}
+                      </div>
+                    )}
+
+                    {/* Tools */}
+                    {attributes.tools_used && (
+                      <div className="flex flex-wrap gap-1.5 pt-2">
+                        {attributes.tools_used.map((t) => (
+                          <span
+                            key={t}
+                            className="rounded bg-surface-elevated px-2 py-0.5 font-mono text-micro text-text-secondary border border-border-subtle"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                )}
 
-                {video.attributes.tools_used?.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
-                    {video.attributes.tools_used.map(tool => {
-                      const value = typeof tool === 'string' ? tool : tool.tool;
-                      return <span key={value} style={pill(value)}>{value}</span>;
-                    })}
+                  {/* Right Action / Player Toggle (5 cols) */}
+                  <div className="lg:w-80 shrink-0 flex flex-col gap-3">
+                    {hasEmbed ? (
+                      <button
+                        onClick={() => setActiveEmbed(isEmbedOpen ? null : video.slug)}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-amber px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-void shadow-amber-glow hover:brightness-110 transition-all"
+                      >
+                        <span>{isEmbedOpen ? 'Close Player' : 'Play Video Reel'}</span>
+                        <span>{isEmbedOpen ? '▲' : '▶'}</span>
+                      </button>
+                    ) : (
+                      <a
+                        href={attributes.proof_link || 'https://www.linkedin.com/in/gururaj-seethur'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-amber/40 bg-amber/10 px-5 py-3 font-mono text-xs font-semibold uppercase text-amber hover:bg-amber/20 transition-all"
+                      >
+                        <span>Verify Credentials</span>
+                        <span>↗</span>
+                      </a>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {video.attributes.access_type === 'private' && (
-                  <a
-                    href="mailto:gururajseethur@gmail.com?subject=Private%20Video%20Access%20Request"
-                    style={{ marginTop: 16, display: 'inline-block', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00D9FF', textDecoration: 'none' }}
-                  >
-                    Request access →
-                  </a>
+                {/* Optional Expandable Embed Player */}
+                {isEmbedOpen && hasEmbed && (
+                  <div className="mt-6 pt-6 border-t border-border-subtle">
+                    <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-amber/30 bg-void">
+                      <iframe
+                        className="h-full w-full"
+                        src={attributes.youtube_embed_link}
+                        title={attributes.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
